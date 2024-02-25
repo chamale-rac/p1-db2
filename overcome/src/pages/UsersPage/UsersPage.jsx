@@ -7,6 +7,7 @@ import SkeletonElement from '@components/skeletons/SkeletonElement'
 import Shimmer from '@components/skeletons/Shimmer'
 
 import * as styles from './UsersPage.module.css'
+import { Dropdown } from '../../components/global'
 
 const UsersPage = () => {
   const { handleRequest } = useApi()
@@ -19,6 +20,8 @@ const UsersPage = () => {
 
   const [offset, setOffset] = useState(0)
   const [limit, setLimit] = useState(30)
+  const [totalResults, setTotalResults] = useState(0)
+  const [searchType, setSearchType] = useState('Reccomended')
 
   const navigate = useNavigate()
 
@@ -28,6 +31,11 @@ const UsersPage = () => {
 
   const getAllUsers = async () => {
     console.log('search', search)
+    if (search === '') {
+      setSearchType('Recommended')
+    } else {
+      setSearchType('Search')
+    }
     try {
       setLoading(true)
       const response = await handleRequest(
@@ -43,6 +51,7 @@ const UsersPage = () => {
 
       setAllUsers(response.data.users)
       setAllPreLoadedUsers(response.data.users)
+      setTotalResults(response.data.total)
     } catch (error) {
       console.error(error)
       setError(
@@ -70,21 +79,84 @@ const UsersPage = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={`${styles.title} font-bebas-neue`}>Search Users</h2>
+      <h2 className={`${styles.title} font-bebas-neue`}>Find new friends</h2>
       <div className={styles.content_container}>
         <div className={styles.search_container}>
-          <SearchInput
-            name={'search'}
-            value={search}
-            onChange={setSearch}
-            onClick={getAllUsers}
-            placeholder={'Search...'}
-            isDynamic={true}
-            searchIcon={'🔍'}
+          <div className="mt-4">
+            <SearchInput
+              name={'search'}
+              value={search}
+              onChange={setSearch}
+              onClick={getAllUsers}
+              placeholder={'Search...'}
+              isDynamic={true}
+              searchIcon={'🔍'}
+            />
+          </div>
+          {/** Select of limit */}
+          <Dropdown
+            label={'Users per page'}
+            customStyles="p-4 mt-0"
+            options={[10, 20, 30, 50]}
+            selected={limit}
+            setSelected={setLimit}
           />
         </div>
+
         {allUsers && !loading ? (
-          <UserList users={allUsers} onClickFunction={handleSetViewProfile} />
+          <>
+            <div className="border m-2 p-2 mt-4 shadow-md flex flex-row justify-between items-center">
+              {/**
+                add button to get previous users, if possible, and other button to get next users if possible
+                */}
+
+              <button
+                className="button asap p-2 rounded-md"
+                onClick={() => {
+                  if (offset - limit >= 0) {
+                    setOffset(offset - limit)
+                    getAllUsers()
+                  }
+                }}
+                disabled={offset <= 0}
+                // Cursor disabled
+                style={
+                  offset <= 0
+                    ? { cursor: 'not-allowed' }
+                    : { cursor: 'pointer' }
+                }
+              >
+                Previous {limit}
+              </button>
+              <div>
+                <p className="text-lg font-bold">
+                  {searchType} users! 😉 (Showing {offset + 1}-
+                  {offset + Math.min(limit, totalResults)} of {totalResults}{' '}
+                  results)
+                </p>
+              </div>
+
+              <button
+                className="button asap p-2 rounded-md"
+                onClick={() => {
+                  if (offset + limit < totalResults) {
+                    setOffset(offset + limit)
+                    getAllUsers()
+                  }
+                }}
+                disabled={offset + limit >= totalResults}
+                // Cursor disabled
+                style={
+                  offset + limit >= totalResults
+                    ? { cursor: 'not-allowed' }
+                    : { cursor: 'pointer' }
+                }
+              >
+                Next {limit}
+              </button>
+            </div>
+            <UserList users={allUsers} onClickFunction={handleSetViewProfile} />
+          </>
         ) : (
           <aside className={styles.skeleton_event_body}>
             <ul className={`${styles.skeleton_users_container}`}>

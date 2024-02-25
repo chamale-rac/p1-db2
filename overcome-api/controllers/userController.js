@@ -4,10 +4,10 @@ const bcrypt = require('bcrypt')
 var cloudinary = require('cloudinary').v2
 
 const getAllUsers = async (req, res) => {
-    const { offset = 0, limit = 30, search = '', user_id } = req.query
+    const { page = 0, amount = 0, limit = 30, search = '', user_id } = req.query
 
     // cast offset and limit to numbers
-    const offsetNum = parseInt(offset)
+    const offsetNum = parseInt(amount) * parseInt(page)
     const limitNum = parseInt(limit)
 
     try {
@@ -32,21 +32,15 @@ const getAllUsers = async (req, res) => {
             }
         }
 
+        const total = await User.countDocuments(matchStage)
         const users = await User.aggregate([
             { $match: matchStage },
             { $project: { _id: 1, email: 1, username: 1 } },
             { $skip: offsetNum },
             { $limit: limitNum },
-            {
-                $group: {
-                    _id: null,
-                    users: { $push: '$$ROOT' },
-                    total: { $sum: 1 },
-                },
-            },
         ])
 
-        res.status(200).json(users[0] || { users: [], total: 0 })
+        res.status(200).json({ users, total })
     } catch (error) {
         console.error(error)
         res.status(500).send('Error fetching users from database')

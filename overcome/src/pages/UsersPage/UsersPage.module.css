@@ -40,6 +40,8 @@
   justify-content: flex-end;
   margin-top: 1.6rem;
   margin-right: 0.9rem;
+  
+  align-items: center;
 }
 
 .skeleton_users_container {
