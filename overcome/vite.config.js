@@ -5,8 +5,8 @@ import path from 'path'
 // docs:: https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: '0.0.0.0',
-    port: 3000,
+    host: process.env.VITE_HOST || '127.0.0.1',
+    port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 4444,
   },
   plugins: [react()],
   resolve: {
