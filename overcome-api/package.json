@@ -1,0 +1,36 @@
+{
+    "name": "overcome-api",
+    "version": "1.0.0",
+    "description": "Backend of the Overcome web application using Express JS",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha test/events.test.js --exit",
+        "dev": "nodemon src/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "engines": {
+        "node": ">=18"
+    },
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "cloudinary": "^1.40.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "mongoose": "^7.0.4",
+        "nodemon": "^3.0.1",
+        "resend": "^1.1.0",
+        "socket.io": "^4.7.2"
+    },
+    "devDependencies": {
+        "chai": "^4.3.7",
+        "chai-http": "^4.4.0",
+        "mocha": "^10.2.0",
+        "mongodb-memory-server": "^8.13.0",
+        "prettier": "^2.8.7",
+        "supertest": "^6.3.3"
+    }
+}

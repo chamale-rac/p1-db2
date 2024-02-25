@@ -1,0 +1,118 @@
+.container {
+  background-color: #f0ffff;
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, grey 1px, transparent 1px),
+    linear-gradient(to bottom, grey 1px, #f0ffff 1px);
+  height: 100%;
+  width: 100%;
+  padding: 25px;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  box-shadow: 5px 5px 0px 0px #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.container h1 {
+  font-family: 'Space Grotesk', cursive;
+  font-size: 70px;
+  font-weight: bold;
+  line-height: 0.8;
+  height: fit-content;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+}
+
+.container h2 {
+  font-family: 'Overpass Mono', monospace;
+  font-size: x-large;
+  font-weight: bold;
+  height: fit-content;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+}
+
+.board {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2em;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  /* Remove scrollbar*/
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+
+  /* Firefox */
+}
+.board::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+.board div {
+  /* height: 200px; */
+  padding: 1em;
+  font-family: 'Overpass Mono', monospace;
+  font-weight: bold;
+  min-width: 250px;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  box-shadow: 5px 5px 0px 0px #000;
+}
+.boardItem {
+  display: block;
+  background-color: rgb(255, 245, 245);
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  height: 32rem;
+  width: 18rem;
+  margin: auto 0;
+}
+
+.boardItem:last-child {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.boardItem:last-child:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0px 0px 0px 0px #000;
+  filter: invert(1);
+  transform: translateY(4px);
+}
+
+.boardItem:last-child h1 {
+  align-self: center;
+}
+
+/*  less than 600 px */
+@media (max-width: 600px) {
+  .container h1:first-of-type {
+    display: none;
+  }
+  .container h2:first-of-type {
+    display: none;
+  }
+}
+
+.previewEventsContainer {
+  margin: auto 0 !important;
+  height: fit-content !important;
+  width: fit-content !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}

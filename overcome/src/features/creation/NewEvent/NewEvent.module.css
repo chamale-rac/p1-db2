@@ -1,0 +1,56 @@
+.container {
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  box-shadow: 5px 5px 0px 0px #000;
+  padding: 32px;
+}
+.title {
+  margin-bottom: 1rem;
+}
+
+aside {
+  position: relative;
+}
+
+.ai {
+  position: absolute;
+  right: 10px;
+  top: 25px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ai_emoji {
+  transform: rotate(0deg);
+  transition: transform 0.5s ease-in-out;
+}
+
+.ai:hover .ai_emoji {
+  transform: rotate(180deg);
+}
+
+.tool {
+  visibility: hidden;
+  width: 200px;
+  background-color: #cdd57e;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  transition: transform 0.5s ease-in-out;
+  transition-delay: 0.1s;
+  padding: 5px;
+  font-size: 0.7rem;
+  border: 1px solid black;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.ai:hover .tool {
+  visibility: visible;
+}

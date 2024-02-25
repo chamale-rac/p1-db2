@@ -1,0 +1,41 @@
+.container {
+  margin: 0.25rem;
+  padding: 0.7rem;
+  width: fit-content;
+  max-width: 70%;
+  min-width: 40%;
+  margin-left: 0.8rem;
+  color: black;
+  background-color: var(--ink-background-messages);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.container.mine {
+  margin-left: 0rem;
+  margin-right: 0.8rem;
+  align-self: flex-end;
+  font-size: small;
+}
+
+.container .text {
+  margin-top: 0.1rem;
+  margin-bottom: 0.3rem;
+
+  word-break: break-all;
+  font-size: small;
+}
+
+.container .user {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: small;
+}
+
+.container .sent_at {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  align-self: flex-end;
+  font-size: x-small;
+}

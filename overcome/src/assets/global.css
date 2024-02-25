@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Overpass+Mono:wght@300;400;500;600;700&family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rubik&family=Space+Grotesk:wght@300;400;700&display=swap');
+/*
+font-family: 'Bebas Neue', cursive;
+font-family: 'Overpass Mono', monospace;
+font-family: 'Roboto Mono', monospace;
+font-family: 'Space Grotesk', sans-serif;
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink-background-dark: #daf5f0;
+  --ink-background-highlight: #cdd57e;
+  --ink-background-light: transparent;
+  --ink-background-messages: #fdfd96;
+  --ink-background-chat: #c4a1ff;
+}
+
+:root {
+  --color-background: #daf5f0;
+}
+
+html {
+  background-color: var(--ink-background-dark);
+  scroll-behavior: smooth;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/*For headers*/
+.font-bebas-neue {
+  font-family: 'Bebas Neue', cursive;
+}
+
+/*For especial text*/
+.font-overpass-mono {
+  font-family: 'Overpass Mono', monospace;
+}
+
+/*For normal text*/
+.font-roboto-mono {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/*For cool people*/
+.font-space-grotesk {
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.app {
+  @apply relative w-full h-screen;
+}
+
+.home {
+  @apply w-full  flex xl:justify-between justify-start items-start flex-col  max-xl:gap-7 z-10;
+}
+
+.home-content {
+  @apply flex-1 xl:justify-center justify-center flex flex-col gap-2 xl:mx-32 mx-6;
+}
+
+.head-text {
+  @apply xl:text-[10rem] text-[7rem] xl:leading-[11rem] leading-[7rem] font-black text-black;
+}
+
+/*TODO change to tailwind*/
+
+.button:hover {
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #000;
+}
+
+.button {
+  box-shadow: 5px 5px 0px 0px #000;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.1s ease-in-out;
+  border: 2px solid black;
+}
+
+.button.asap:hover {
+  transform: translateY(2px);
+  box-shadow: 0px 0px 0px 0px #000;
+}
+
+.button.asap {
+  box-shadow: 2px 2px 0px 0px #000;
+}
+
+.standard_border {
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  box-shadow: 5px 5px 0px 0px #000;
+}
+
+.grid_bg {
+  background-color: #ece2aa;
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, grey 1px, transparent 1px),
+    linear-gradient(to bottom, grey 1px, #f0ffff 1px);
+}
+
+/*THIS ARE GLOBAL CONFIGURATIONS FOR POPUPS*/
+.popup-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@keyframes anvil {
+  0% {
+    transform: scale(1) translateY(0px);
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(241, 241, 241, 0);
+  }
+  1% {
+    transform: scale(0.96) translateY(10px);
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(241, 241, 241, 0);
+  }
+  100% {
+    transform: scale(1) translateY(0px);
+    opacity: 1;
+    box-shadow: 0 0 500px rgba(241, 241, 241, 0);
+  }
+}
+.popup-content {
+  -webkit-animation: anvil 0.3s cubic-bezier(0.38, 0.1, 0.36, 0.9) forwards;
+}

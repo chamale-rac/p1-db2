@@ -1,0 +1,283 @@
+.container {
+  border-radius: 5px;
+  margin: 0;
+  background-color: white;
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
+  padding: 25px;
+  max-width: 100%;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  box-shadow: 5px 5px 0px 0px #000;
+}
+
+.container h2 {
+  font-family: 'Bebas Neue', cursive;
+}
+
+.container h1 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 70px;
+  font-weight: bold;
+  height: fit-content;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+}
+
+.container h5 {
+  margin: 0 0 20px 0;
+}
+
+.main_info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+.main_info h3 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.custom_section:first-child {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.custom_section img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.custom_section h3 {
+  margin: 0;
+}
+
+.custom_section h4 {
+  font-size: 1.5rem;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.custom_section p {
+  font-size: 1em;
+  line-height: 1.5em;
+  padding: 0px 100px;
+  margin-bottom: 20px;
+}
+
+/* Estilos para la sección de actividades */
+.custom_section:last-child {
+  margin-top: 50px;
+}
+
+.custom_section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom_section li {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.custom_section h2 {
+  padding-left: 10px;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 40px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.custom_section ul {
+  display: flex;
+  align-items: center;
+}
+
+.custom_section li {
+  padding: 10px;
+  font-size: 1rem;
+  background-color: var(--ink-background-highlight);
+  margin-right: 10px;
+  border-radius: 10px;
+  border: 1px solid black;
+  cursor: pointer;
+  transform: translateX(-4px) translateY(-4px);
+  box-shadow: 5px 5px 0px 0px #000;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.custom_section li:hover {
+  transform: translateX(0px) translateY(0px);
+  box-shadow: 0px 0px 0px 0px #000;
+}
+
+.custom_section.sub_section {
+  margin-left: 100px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+.eventsContainer {
+  margin: 10px 0 25px 0;
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: 30% 30% 30%;
+  column-gap: 3%;
+  row-gap: 15px;
+}
+
+.eventsContainerOtherProfile {
+  margin: 10px 0 25px 0;
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: 100%;
+  row-gap: 25px;
+}
+
+.eventsContainer h1 {
+  text-align: center;
+  font-size: xx-large;
+  margin: 0 auto 0 auto;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 75%;
+  text-align: center;
+  font-size: 3.8rem;
+}
+
+.loading span {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.imageWrapper {
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageWrapper button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid black;
+}
+
+.titleWrapper .editButton {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid black;
+  margin-left: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.titleWrapper .requestButton {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid black;
+  margin-left: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.imageWrapper button:hover,
+.titleWrapper button:hover {
+  transform: scale(1.1);
+  background-color: #cdd57e;
+}
+
+.titleWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.content_wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.2rem;
+  padding-left: 0.2rem;
+}
+
+.content_wrapper > h3,
+.content_title {
+  margin: 0;
+  padding: 0.2rem 0.3rem;
+  font-weight: bold;
+  font-size: 2rem;
+  height: fit-content;
+}
+
+.content_wrapper > p {
+  margin: auto 0;
+  padding: 0.2rem 0.4rem;
+  margin-left: 0.4rem;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.content_wrapper > aside {
+  margin: auto 0;
+  padding: 0.2rem 0.4rem;
+  margin-left: 0.4rem;
+  border-radius: 10px;
+}
+
+.content_wrapper > .event_link {
+  padding: 0.2rem 0.4rem;
+}
+
+.content_wrapper > .event_link:hover {
+  text-decoration: underline;
+  color: black;
+}
+
+.content_wrapper > .event_creator {
+  border: none;
+  padding-left: 0rem;
+}

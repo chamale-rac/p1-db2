@@ -1,0 +1,72 @@
+.button {
+  padding-left: 1rem /* 8px */;
+  padding-right: 1rem /* 8px */;
+  padding-top: 0.4rem /* 6px */;
+  padding-bottom: 0.4rem /* 6px */;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.1s ease-in-out;
+  border: 2px solid black;
+  flex: 1 1 0%;
+  border-radius: 5px;
+  width: 100%;
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #000;
+}
+.button.primary:hover {
+  transform: translateY(0px);
+  box-shadow: 5px 5px 0px 0px #000;
+  background-color: white;
+  color: black;
+}
+
+.button.secondary {
+  background-color: white;
+  color: #333;
+  border: 1px solid #333;
+}
+
+.button.tertiary {
+  background-color: #cdd57e;
+  color: #000000;
+  border: 1px solid #1d1d1d;
+}
+.button.tertiary:hover {
+  transform: translateY(0px);
+  box-shadow: 5px 5px 0px 0px #000;
+  background-color: white;
+  color: black;
+}
+
+.button.secondary:hover {
+  transform: translateY(0px);
+  box-shadow: 5px 5px 0px 0px #000;
+  background-color: white;
+  color: black;
+}
+
+.button.primary {
+  background-color: black;
+  color: white;
+}
+
+.button[disabled].primary:hover {
+  background-color: black;
+  color: white;
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #000;
+}
+
+/*TODO consider quit the background-color*/
+.loading {
+  text-decoration: none !important;
+  background-color: white !important;
+}
+
+.button[disabled] {
+  background-color: black;
+  text-decoration: line-through;
+  color: white;
+  cursor: not-allowed;
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #000;
+}
