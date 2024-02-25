@@ -7,9 +7,11 @@ import { Collapse } from '@components/global'
 import SkeletonElement from '@components/skeletons/SkeletonElement'
 import Shimmer from '@components/skeletons/Shimmer'
 import SkeletonEventPreview from './SkeletonEventPreview/SkeletonEventPreview'
+import { authStore } from '@context'
 
 function GlobalEvents() {
   // TODO: Add error handling, and write neater code. This whole file is cursed.
+  const { auth } = authStore
 
   const [userEvents, setUserEvents] = useState([])
   const [preLoadedEvents, setPreLoadedEvents] = useState([])
@@ -29,7 +31,7 @@ function GlobalEvents() {
   const searchbar = useRef(null)
 
   // To calculate pagination
-  const eventsPerPage = 5
+  const eventsPerPage = 10
   const pages = 0
 
   useEffect(() => {
@@ -48,8 +50,7 @@ function GlobalEvents() {
   }, [currentPage])
 
   const getEventCount = async () => {
-    const response = await handleRequest('GET', '/events/count')
-    setEventCount(response.data)
+    setEventCount(100)
     if (eventCount < eventsPerPage) {
       // No need for pagination
       setPageNum(0)
@@ -66,7 +67,9 @@ function GlobalEvents() {
     setLoading(true)
     const response = await handleRequest(
       'GET',
-      `/events?limit=${eventsPerPage}&offset=${currentPage * eventsPerPage}`,
+      `/events?limit=${eventsPerPage}&offset=${
+        currentPage * eventsPerPage
+      }&user_id=${auth.user.id}`,
       {},
       {},
       false,
@@ -76,6 +79,7 @@ function GlobalEvents() {
     response.data.sort((a, b) => {
       return new Date(b.date) - new Date(a.date)
     })
+    // TODO:SORT BY DATE
 
     setTimeout(() => {
       setUserEvents(response.data)

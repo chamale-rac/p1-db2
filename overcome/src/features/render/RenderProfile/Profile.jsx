@@ -189,7 +189,7 @@ function Profile() {
           Edit Picture
         </button>
       </div>
-      { !profileLoading ? (
+      {!profileLoading ? (
         <>
           <div className="flex w-full flex-col justify-start mt-4">
             <div className="flex items-center justify-between">
@@ -214,14 +214,14 @@ function Profile() {
             <div className="mt-6 max-w-lg text-light-2 ml-2 xs:ml-0 text-xs md:text-base">
               <p className="text-left">
                 <span className="font-bold">Interests:</span>{' '}
-                {user?.interests && user?.interests.length > 0
+                {Array.isArray(user?.interests) && user?.interests.length > 0
                   ? user?.interests?.join(', ')
                   : 'No interests found'}
               </p>
               <p className="text-left">
                 <span className="font-bold">Favorite Games:</span>{' '}
-                {user?.favorites && user?.favorites.length > 0
-                  ? user?.favorites?.join(', ')
+                {Array.isArray(user?.favorites) && user?.favorites.length > 0
+                  ? user?.favorites.join(', ')
                   : 'No favorite games found'}
               </p>
             </div>
@@ -247,7 +247,7 @@ function Profile() {
           </section>
         </>
       ) : (
-          <ProfileLoader />
+        <ProfileLoader />
       )}
     </div>
   )
