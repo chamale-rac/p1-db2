@@ -16,6 +16,10 @@ const UsersPage = () => {
   const [allPreLoadedUsers, setAllPreLoadedUsers] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  const [offset, setOffset] = useState(0)
+  const [limit, setLimit] = useState(30)
+
   const navigate = useNavigate()
 
   const handleSetViewProfile = (user_id) => {
@@ -23,11 +27,12 @@ const UsersPage = () => {
   }
 
   const getAllUsers = async () => {
+    console.log('search', search)
     try {
       setLoading(true)
       const response = await handleRequest(
         'GET',
-        `/users`,
+        `/users?search=${search}&user_id=${auth.user.id}&offset=${offset}&limit=${limit}`,
         {},
         {
           Authorization: 'Bearer ' + auth.authToken,
@@ -35,8 +40,9 @@ const UsersPage = () => {
         true,
       )
       /* console.log(response.data)*/
-      setAllUsers(response.data)
-      setAllPreLoadedUsers(response.data)
+
+      setAllUsers(response.data.users)
+      setAllPreLoadedUsers(response.data.users)
     } catch (error) {
       console.error(error)
       setError(
@@ -47,16 +53,16 @@ const UsersPage = () => {
     }
   }
 
-  useEffect(() => {
-    if (search === '') {
-      setAllUsers(allPreLoadedUsers)
-    } else {
-      const usersFiltered = allUsers.filter((user) => {
-        return user.username.toLowerCase().includes(search.toLowerCase())
-      })
-      setAllUsers(usersFiltered)
-    }
-  }, [search])
+  // useEffect(() => {
+  //   if (search === '') {
+  //     setAllUsers(allPreLoadedUsers)
+  //   } else {
+  //     const usersFiltered = allUsers.filter((user) => {
+  //       return user.username.toLowerCase().includes(search.toLowerCase())
+  //     })
+  //     setAllUsers(usersFiltered)
+  //   }
+  // }, [search])
 
   useEffect(() => {
     getAllUsers()
@@ -71,23 +77,24 @@ const UsersPage = () => {
             name={'search'}
             value={search}
             onChange={setSearch}
+            onClick={getAllUsers}
             placeholder={'Search...'}
-            isDynamic={false}
+            isDynamic={true}
             searchIcon={'🔍'}
           />
         </div>
-        { allUsers ? (
+        {allUsers && !loading ? (
           <UserList users={allUsers} onClickFunction={handleSetViewProfile} />
         ) : (
           <aside className={styles.skeleton_event_body}>
             <ul className={`${styles.skeleton_users_container}`}>
-              {
-                Array(10).fill().map((_, index) => (
-                  <SkeletonElement key={index} type="friendPreview"/>
-                ))
-              }
+              {Array(10)
+                .fill()
+                .map((_, index) => (
+                  <SkeletonElement key={index} type="friendPreview" />
+                ))}
             </ul>
-            <Shimmer/>
+            <Shimmer />
           </aside>
         )}
       </div>

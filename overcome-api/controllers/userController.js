@@ -4,9 +4,49 @@ const bcrypt = require('bcrypt')
 var cloudinary = require('cloudinary').v2
 
 const getAllUsers = async (req, res) => {
+    const { offset = 0, limit = 30, search = '', user_id } = req.query
+
+    // cast offset and limit to numbers
+    const offsetNum = parseInt(offset)
+    const limitNum = parseInt(limit)
+
     try {
-        const users = await User.find({}, { _id: 1, email: 1, username: 1 })
-        res.status(200).json(users)
+        let matchStage = {}
+        if (search !== '') {
+            matchStage = {
+                $or: [
+                    { username: { $regex: search, $options: 'i' } },
+                    { name: { $regex: search, $options: 'i' } }, // regex is the query for searching
+                    { lastname: { $regex: search, $options: 'i' } }, // case insensitive
+                ],
+            }
+        } else {
+            const user = await User.findById(user_id)
+            if (user) {
+                matchStage = {
+                    $or: [
+                        { interests: { $in: user.interests } },
+                        { favorites: { $in: user.favorites } },
+                    ],
+                }
+            }
+        }
+
+        const users = await User.aggregate([
+            { $match: matchStage },
+            { $project: { _id: 1, email: 1, username: 1 } },
+            { $skip: offsetNum },
+            { $limit: limitNum },
+            {
+                $group: {
+                    _id: null,
+                    users: { $push: '$$ROOT' },
+                    total: { $sum: 1 },
+                },
+            },
+        ])
+
+        res.status(200).json(users[0] || { users: [], total: 0 })
     } catch (error) {
         console.error(error)
         res.status(500).send('Error fetching users from database')
@@ -187,7 +227,6 @@ const getUserSavedEvents = async (req, res) => {
     }
 }
 
-
 const getUserUpcomingEvents = async (req, res) => {
     try {
         const { id } = req.params
@@ -195,7 +234,7 @@ const getUserUpcomingEvents = async (req, res) => {
         // const events = await User.findById(id).populate()
         const events = await User.findById(id).populate('savedEvents')
         // let upcomingEvents = []
-        
+
         // if (events && Array.isArray(events)) {
         //     upcomingEvents = events.sort((a, b) => a.date - b.date);
         //     upcomingEvents = upcomingEvents.slice(0, 3)
@@ -337,5 +376,5 @@ module.exports = {
     removeSavedEvent,
     joinEvent,
     removeJoinedEvent,
-    getUserUpcomingEvents
+    getUserUpcomingEvents,
 }
