@@ -4,11 +4,13 @@ const bcrypt = require('bcrypt')
 var cloudinary = require('cloudinary').v2
 
 const getAllUsers = async (req, res) => {
-    const { page = 0, amount = 0, limit = 30, search = '', user_id } = req.query
-
-    // cast offset and limit to numbers
-    const offsetNum = parseInt(amount) * parseInt(page)
-    const limitNum = parseInt(limit)
+    const {
+        offset = 0,
+        limit = 30,
+        search = '',
+        suggest_by,
+        user_id,
+    } = req.query
 
     try {
         let matchStage = {}
@@ -36,8 +38,8 @@ const getAllUsers = async (req, res) => {
         const users = await User.aggregate([
             { $match: matchStage },
             { $project: { _id: 1, email: 1, username: 1 } },
-            { $skip: offsetNum },
-            { $limit: limitNum },
+            { $skip: parseInt(offset) },
+            { $limit: Math.min(parseInt(limit), 300) },
         ])
 
         res.status(200).json({ users, total })

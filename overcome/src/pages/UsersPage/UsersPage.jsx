@@ -22,6 +22,7 @@ const UsersPage = () => {
   const [limit, setLimit] = useState(30)
   const [totalResults, setTotalResults] = useState(0)
   const [searchType, setSearchType] = useState('Reccomended')
+  const [suggestBy, setSuggestBy] = useState('Friends')
 
   const navigate = useNavigate()
 
@@ -38,9 +39,11 @@ const UsersPage = () => {
     }
     try {
       setLoading(true)
+      // suggest remove whitespace
+      const suggestByRemove = suggestBy.replace(/\s/g, '')
       const response = await handleRequest(
         'GET',
-        `/users?search=${search}&user_id=${auth.user.id}&offset=${offset}&limit=${limit}`,
+        `/users?search=${search}&user_id=${auth.user.id}&offset=${offset}&limit=${limit}&suggest_by=${suggestByRemove}`,
         {},
         {
           Authorization: 'Bearer ' + auth.authToken,
@@ -77,6 +80,10 @@ const UsersPage = () => {
     getAllUsers()
   }, [])
 
+  useEffect(() => {
+    getAllUsers()
+  }, [limit, offset, suggestBy])
+
   return (
     <div className={styles.container}>
       <h2 className={`${styles.title} font-bebas-neue`}>Find new friends</h2>
@@ -96,11 +103,20 @@ const UsersPage = () => {
           {/** Select of limit */}
           <Dropdown
             label={'Users per page'}
-            customStyles="p-4 mt-0"
+            customStyles="p-4 mt-0 ml-2"
             options={[10, 20, 30, 50]}
             selected={limit}
             setSelected={setLimit}
           />
+          {/* {search === '' && (
+            <Dropdown
+              label={'Suggest by:'}
+              customStyles="p-4 mt-0"
+              options={['Friends', 'Interests & Games']}
+              selected={suggestBy}
+              setSelected={setSuggestBy}
+            />
+          )} */}
         </div>
 
         {allUsers && !loading ? (
@@ -128,11 +144,12 @@ const UsersPage = () => {
               >
                 Previous {limit}
               </button>
-              <div>
+              <div className="p-3 text-center">
                 <p className="text-lg font-bold">
-                  {searchType} users! 😉 (Showing {offset + 1}-
-                  {offset + Math.min(limit, totalResults)} of {totalResults}{' '}
-                  results)
+                  {searchType} users! 😉{' '}
+                  {searchType === 'Recommended' && 'Interests and games'}{' '}
+                  (Showing {offset + 1}-{offset + Math.min(limit, totalResults)}{' '}
+                  of {totalResults} results)
                 </p>
               </div>
 
