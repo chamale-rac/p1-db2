@@ -1,182 +1,120 @@
-import { useState, useEffect, useRef } from 'react'
-import { useApi } from '@hooks'
-import * as styles from './GlobalEvents.module.css'
+import React, { useState, useEffect } from 'react'
+import {
+  Collapse,
+  Chat,
+  SearchInput,
+  UserList,
+  Input,
+} from '@components/global'
+
 import { Events } from '@features/render'
-import { Input, SearchInput, ClockLoader } from '@components/global'
-import { Collapse } from '@components/global'
-import SkeletonElement from '@components/skeletons/SkeletonElement'
-import Shimmer from '@components/skeletons/Shimmer'
-import SkeletonEventPreview from './SkeletonEventPreview/SkeletonEventPreview'
 import { authStore } from '@context'
+import { useNavigate } from 'react-router-dom'
+import { useApi } from '@hooks'
+import SkeletonEventPreview from './SkeletonEventPreview/SkeletonEventPreview'
+import Shimmer from '@components/skeletons/Shimmer'
 
-function GlobalEvents() {
-  // TODO: Add error handling, and write neater code. This whole file is cursed.
-  const { auth } = authStore
-
-  const [userEvents, setUserEvents] = useState([])
-  const [preLoadedEvents, setPreLoadedEvents] = useState([])
-  const { handleRequest } = useApi()
-  const [loading, setLoading] = useState(false)
-  const [search, setSearch] = useState('')
-
+import * as styles from './GlobalEvents.module.css'
+import { Dropdown } from '../../../components/global'
+const UsersPage = () => {
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
-  const [tags, setTags] = useState([])
+  const [userEvents, setUserEvents] = useState([])
+  const { handleRequest } = useApi()
+  const { auth } = authStore
+  const [search, setSearch] = useState('')
+  const [allUsers, setAllUsers] = useState(null)
+  const [allPreLoadedUsers, setAllPreLoadedUsers] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  //pagination states
-  const [eventCount, setEventCount] = useState(0)
-  const [pageNum, setPageNum] = useState(0)
-  const [currentPage, setPage] = useState(0)
-  // to scroll to top of page when page changes
-  const searchbar = useRef(null)
+  const [offset, setOffset] = useState(0)
+  const [limit, setLimit] = useState(30)
+  const [totalResults, setTotalResults] = useState(0)
+  const [searchType, setSearchType] = useState('Reccomended')
+  const [suggestBy, setSuggestBy] = useState('Friends')
+  const [tags, setTags] = useState('')
+  const [durationSort, setDurationSort] = useState('asc')
+  const [dateSort, setDateSort] = useState('asc')
+  const [joinable, setJoinable] = useState('Yes')
+  const [suggestions, setSuggestions] = useState('No')
 
-  // To calculate pagination
-  const eventsPerPage = 10
-  const pages = 0
+  const navigate = useNavigate()
+
+  const handleSetViewProfile = (user_id) => {
+    navigate(`/home/users/${user_id}`)
+  }
+
+  const getAllUsers = async () => {
+    if (search === '') {
+      setSearchType('Recommended')
+    } else {
+      setSearchType('Search')
+    }
+    try {
+      setLoading(true)
+      setUserEvents([])
+      const joinableBool = joinable === 'Yes' ? true : false
+      const suggestionsBool = suggestions === 'Yes' ? true : false
+
+      console.log('joinableBool', joinableBool)
+      console.log('suggestionsBool', suggestionsBool)
+      const response = await handleRequest(
+        'POST',
+        `/events/search?search=${search}&user_id=${auth.user.id}&offset=${offset}&limit=${limit}`,
+        {
+          tags: formatTags(tags),
+          startDate: startDate,
+          endDate: endDate,
+          dateSort: sortNameToNum(dateSort),
+          durationSort: sortNameToNum(durationSort),
+          joinable: joinableBool,
+          suggestions: suggestionsBool,
+        },
+        {
+          Authorization: 'Bearer ' + auth.authToken,
+        },
+        true,
+      )
+      /* console.log(response.data)*/
+
+      // setAllUsers(response.data.users)
+      // setAllPreLoadedUsers(response.data.users)
+      console.log('response.data', response.data)
+      setUserEvents(response.data.events)
+      setTotalResults(response.data.totalResults)
+    } catch (error) {
+      console.error(error)
+      setError(
+        'Error fetching event details, please try again later or contact support',
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    getInitialEvents()
+    getAllUsers()
   }, [])
 
   useEffect(() => {
-    getEventCount()
-    createPagination()
-  }, [userEvents])
+    getAllUsers()
+  }, [limit, offset])
 
-  useEffect(() => {
-    getInitialEvents()
-
-    searchbar.current.scrollIntoView({ behavior: 'smooth' })
-  }, [currentPage])
-
-  const getEventCount = async () => {
-    setEventCount(100)
-    if (eventCount < eventsPerPage) {
-      // No need for pagination
-      setPageNum(0)
+  function formatTags(tags) {
+    console.log('tags', tags)
+    if (tags === '') {
+      return []
     } else {
-      // Round to the nearest positive integer to accomadate for all events
-      setPageNum(Math.ceil(eventCount / eventsPerPage))
-    }
-  }
-  var pagination = []
-  const createPagination = () => {}
-
-  const getInitialEvents = async () => {
-    setUserEvents([])
-    setLoading(true)
-    const response = await handleRequest(
-      'GET',
-      `/events?limit=${eventsPerPage}&offset=${
-        currentPage * eventsPerPage
-      }&user_id=${auth.user.id}`,
-      {},
-      {},
-      false,
-    )
-    // ? error handling???
-    //order by date (newest first)
-    response.data.sort((a, b) => {
-      return new Date(b.date) - new Date(a.date)
-    })
-    // TODO:SORT BY DATE
-
-    setTimeout(() => {
-      setUserEvents(response.data)
-      setPreLoadedEvents(response.data)
-      setLoading(false)
-    }, 1000)
-  }
-
-  const onClick = async () => {
-    const tagArray = search
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== '')
-
-    if (
-      tagArray.length > 1 ||
-      (tagArray.length === 1 && tagArray[0] !== search.trim())
-    ) {
-      const tagsQueryParam = tagArray.join(',')
-      var queryString = `/events/search?tags=${encodeURIComponent(
-        tagsQueryParam,
-      )}`
-      if (startDate && endDate) {
-        queryString += `&startDate=${encodeURIComponent(
-          startDate,
-        )}&endDate=${encodeURIComponent(endDate)}`
-      }
-
-      try {
-        // Make the request using the constructed query string
-        const response = await handleRequest('get', queryString)
-
-        // Set the preLoadedEvent state with the response data
-        setUserEvents(response.data)
-      } catch (error) {
-        /* console.log(error)*/
-        // Handle error if necessary
-      }
-    } else {
-      const titleQueryParam = search.trim()
-      var queryString = `/events/search?title=${encodeURIComponent(
-        titleQueryParam,
-      )}`
-      if (startDate && endDate) {
-        queryString += `&startDate=${encodeURIComponent(
-          startDate,
-        )}&endDate=${encodeURIComponent(endDate)}`
-      }
-
-      try {
-        // Make the request using the constructed query string
-        const response = await handleRequest('get', queryString)
-
-        // Set the preLoadedEvent state with the response data
-        setUserEvents(response.data)
-      } catch (error) {
-        /* console.log(error)*/
-        // Handle error if necessary
-      }
+      return tags.split(',').map((tag) => tag.trim())
     }
   }
 
-  useEffect(() => {
-    const tagArray = search
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== '')
-    setTags(tagArray)
-  }, [search])
-
-  for (let i = 0; i < pageNum; i++) {
-    if (i === currentPage) {
-      pagination.push(
-        <button
-          key={i}
-          className={`${styles.currentPage}`}
-          onClick={() => {
-            setPage(i)
-            // focus view to first event on page
-          }}
-        >
-          Page {i + 1}
-        </button>,
-      )
+  function sortNameToNum(name) {
+    if (name === 'asc') {
+      return 1
     } else {
-      pagination.push(
-        <button
-          key={i}
-          className="page-button"
-          onClick={() => {
-            setPage(i)
-            // focus view to first event on page
-          }}
-        >
-          Page {i + 1}
-        </button>,
-      )
+      return -1
     }
   }
 
@@ -185,62 +123,142 @@ function GlobalEvents() {
       <div className={styles.flexContainer}>
         <h1>Events</h1>
       </div>
-      <div className={styles.search} ref={searchbar}>
-        <SearchInput
-          name={'search'}
-          value={search}
-          onChange={setSearch}
-          onClick={onClick}
-          placeholder={'Search...'}
-          isDynamic={true}
-          searchIcon={'🔍'}
-        />
-      </div>
 
-      <div className={styles.inputTags}>
-        {/* Display a message explaining how to use tags */}
-        {tags.length <= 1 && (
-          <div className={`.font-bebas-neue`}>
-            Enter multiple tags separated by commas to search by tags.
-          </div>
-        )}
-        {/* Render the tags if there are more than one */}
-        {tags.length > 1 && (
-          <>
-            <div>Tags:</div>
-            {tags.map((tag) => (
-              <div className={`${styles.tag} .font-bebas-neue`} key={tag}>
-                {tag}
-              </div>
-            ))}
-          </>
-        )}
-      </div>
-
-      <div className={`${styles.dateFilter} font-space-grotesk`}>
-        <Input
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          name="date"
-          label="Start Date"
-          type="date"
-          required
-        />
-
-        <Input
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          name="date"
-          label="End Date"
-          type="date"
-          required
-        />
-      </div>
-
-      {userEvents.length > 0 ? (
-        <div className={styles.eventsContainer}>
-          <Events events={userEvents} />
+      <div className={`${styles.search} mb-4 flex-col items-center`}>
+        <div className="flex flex-row items-center gap-4 mb-4">
+          <SearchInput
+            name={'search'}
+            value={search}
+            onChange={setSearch}
+            onClick={getAllUsers}
+            placeholder={'Title...'}
+            isDynamic={true}
+            searchIcon={'🔍'}
+          />
         </div>
+        <div className="flex flex-row items-center gap-5">
+          <div>
+            <SearchInput
+              name={'tags'}
+              value={tags}
+              onChange={setTags}
+              placeholder={'Tags'}
+              isDynamic={false}
+            />
+            *Separate tags with commas
+          </div>
+          {/** Select of limit */}
+          <div className={`${styles.dateFilter} font-space-grotesk`}>
+            <Input
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              name="date"
+              label="Min Date"
+              type="date"
+              required
+            />
+
+            <Input
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              name="date"
+              label="Max Date"
+              type="date"
+              required
+            />
+          </div>
+          <Dropdown
+            label={'Date sort'}
+            customStyles=""
+            options={['asc', 'desc']}
+            selected={dateSort}
+            setSelected={setDateSort}
+          />
+          <Dropdown
+            label={'Duration sort'}
+            customStyles=""
+            options={['asc', 'desc']}
+            selected={durationSort}
+            setSelected={setDurationSort}
+          />
+          <Dropdown
+            label={'Joinable:'}
+            customStyles=""
+            options={['Yes', 'No']}
+            selected={joinable}
+            setSelected={setJoinable}
+          />
+          <Dropdown
+            label={'Suggestions:'}
+            customStyles=""
+            options={['Yes', 'No']}
+            selected={suggestions}
+            setSelected={setSuggestions}
+          />
+          <Dropdown
+            label={'Events per page:'}
+            customStyles=""
+            options={[10, 20, 30, 50]}
+            selected={limit}
+            setSelected={setLimit}
+          />
+        </div>
+      </div>
+
+      <div className="border m-2 p-2 mt-4 shadow-md flex flex-row justify-between items-center">
+        {/**
+                add button to get previous users, if possible, and other button to get next users if possible
+                */}
+
+        <button
+          className="button asap p-2 rounded-md"
+          onClick={() => {
+            if (offset - limit >= 0) {
+              setOffset(offset - limit)
+              getAllUsers()
+            }
+          }}
+          disabled={offset <= 0}
+          // Cursor disabled
+          style={
+            offset <= 0 ? { cursor: 'not-allowed' } : { cursor: 'pointer' }
+          }
+        >
+          Previous {limit}
+        </button>
+        <div className="p-3 text-center">
+          <p className="text-lg font-bold">
+            {searchType} events 😉 (Showing {offset + 1}-
+            {offset + Math.min(limit, totalResults)} of {totalResults} results)
+          </p>
+        </div>
+
+        <button
+          className="button asap p-2 rounded-md"
+          onClick={() => {
+            if (offset + limit < totalResults) {
+              setOffset(offset + limit)
+              getAllUsers()
+            }
+          }}
+          disabled={offset + limit >= totalResults}
+          // Cursor disabled
+          style={
+            offset + limit >= totalResults
+              ? { cursor: 'not-allowed' }
+              : { cursor: 'pointer' }
+          }
+        >
+          Next {limit}
+        </button>
+      </div>
+
+      {userEvents?.length > 0 ? (
+        <>
+          <div className={styles.eventsContainer}>
+            <Events events={userEvents} />
+          </div>
+        </>
       ) : loading ? (
         <ul className={styles.skeletons_events_container}>
           <SkeletonEventPreview />
@@ -254,9 +272,8 @@ function GlobalEvents() {
           No events found! 😔
         </div>
       )}
-      <div className={styles.pagination}>{pageNum > 0 ? pagination : ''}</div>
     </div>
   )
 }
 
-export default GlobalEvents
+export default UsersPage

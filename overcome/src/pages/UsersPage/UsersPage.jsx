@@ -65,24 +65,13 @@ const UsersPage = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (search === '') {
-  //     setAllUsers(allPreLoadedUsers)
-  //   } else {
-  //     const usersFiltered = allUsers.filter((user) => {
-  //       return user.username.toLowerCase().includes(search.toLowerCase())
-  //     })
-  //     setAllUsers(usersFiltered)
-  //   }
-  // }, [search])
-
   useEffect(() => {
     getAllUsers()
   }, [])
 
   useEffect(() => {
     getAllUsers()
-  }, [limit, offset, suggestBy])
+  }, [limit, offset])
 
   return (
     <div className={styles.container}>
@@ -108,15 +97,6 @@ const UsersPage = () => {
             selected={limit}
             setSelected={setLimit}
           />
-          {/* {search === '' && (
-            <Dropdown
-              label={'Suggest by:'}
-              customStyles="p-4 mt-0"
-              options={['Friends', 'Interests & Games']}
-              selected={suggestBy}
-              setSelected={setSuggestBy}
-            />
-          )} */}
         </div>
 
         {allUsers && !loading ? (
@@ -146,10 +126,12 @@ const UsersPage = () => {
               </button>
               <div className="p-3 text-center">
                 <p className="text-lg font-bold">
-                  {searchType} users! 😉{' '}
-                  {searchType === 'Recommended' && 'Interests and games'}{' '}
-                  (Showing {offset + 1}-{offset + Math.min(limit, totalResults)}{' '}
-                  of {totalResults} results)
+                  {searchType} users{' '}
+                  {searchType === 'Recommended' &&
+                    'based on interests and games'}
+                  ! 😉 (Showing {offset + 1}-
+                  {offset + Math.min(limit, totalResults)} of {totalResults}{' '}
+                  results)
                 </p>
               </div>
 

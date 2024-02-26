@@ -52,6 +52,11 @@ const createEvent = async (req, res) => {
         // add event id to chat
         chat.event_id = event._id
 
+        // add event id to user createdEvents
+        const user = await User.findById(req.body.creator)
+        user.createdEvents.push(event._id)
+        await user.save()
+
         const event_id = event._id
 
         await chat.save()
@@ -78,34 +83,107 @@ const getEventById = async (req, res) => {
 }
 
 const searchEvents = async (req, res) => {
-    const { title, tags, startDate, endDate } = req.query
-
+    const { search = '', user_id, offset = 0, limit = 30 } = req.query
+    const {
+        tags,
+        startDate,
+        endDate,
+        dateSort,
+        durationSort,
+        joinable,
+        suggestions,
+    } = req.body
+    console.log('tags', tags)
+    console.log('joinable', joinable)
+    console.log('suggestionssss', suggestions)
     try {
-        const query = {}
+        let pipeline = []
+        if (suggestions) {
+            console.log('suggestions', suggestions)
+            // Case when search is empty, use user's interests and favorite games
+            const user = await User.findById(user_id)
+            const userTags = [...user.interests, ...user.favorites]
 
-        // Build the query based on the user's input
-        if (title) {
-            // Search by title (case-insensitive)
-            query.title = { $regex: new RegExp(title, 'i') }
+            pipeline.push({
+                $match: {
+                    tags: { $in: userTags },
+                },
+            })
         }
 
-        if (tags) {
-            // Search by tags (split by comma and remove leading/trailing spaces)
-            const tagsArray = tags.split(',').map((tag) => tag.trim())
-            query.tags = { $in: tagsArray }
+        // regex search based on search match with title
+        if (search !== '') {
+            console.log('search', search)
+            pipeline.push({
+                $match: {
+                    title: { $regex: search, $options: 'i' },
+                },
+            })
+        }
+
+        // Case when search is not empty, use all the tags, startDate, endDate, dateSort, durationSort, and joinable
+        let matchQuery = {}
+        if (tags.length > 0) {
+            console.log('tags', tags)
+            matchQuery.tags = { $in: tags }
         }
 
         if (startDate && endDate) {
-            // Search by date range
-            query.date = { $gte: startDate, $lte: endDate }
+            const start = new Date(startDate)
+            const end = new Date(endDate)
+            console.log('start', start)
+            console.log('end', end)
+
+            if (start > end) {
+                return res
+                    .status(400)
+                    .send(
+                        'Invalid date range. Start date must be less than or equal to end date.'
+                    )
+            }
+            matchQuery.date = {
+                $gte: start,
+                $lte: end,
+            }
         }
 
-        // Perform the search using the built query
-        const events = await Event.find(query)
+        if (joinable) {
+            matchQuery.$expr = {
+                $lt: [{ $size: '$participants' }, '$limit'],
+            }
+        }
 
-        res.json(events)
+        pipeline.push({ $match: matchQuery })
+
+        // Get total results before applying offset and limit
+        const totalResults = await Event.aggregate([
+            ...pipeline,
+            { $count: 'totalResults' },
+        ])
+
+        // Apply sorting
+        if (dateSort) {
+            pipeline.push({ $sort: { date: dateSort } })
+        }
+
+        if (durationSort) {
+            pipeline.push({ $sort: { duration: durationSort } })
+        }
+
+        // Apply offset and limit
+        pipeline.push({ $skip: parseInt(offset) }, { $limit: parseInt(limit) })
+
+        // Perform the search using the built pipeline
+        const events = await Event.aggregate(pipeline)
+
+        res.json({
+            events,
+            totalResults: totalResults.length
+                ? totalResults[0].totalResults
+                : 0,
+        })
     } catch (error) {
-        error
+        console.error(error)
         res.status(500).send('Error fetching events from the database')
     }
 }
@@ -223,6 +301,9 @@ const deleteEventById = async (req, res) => {
                 )
                 user.joinedEvents = user.joinedEvents.filter(
                     (joinedEvent) => joinedEvent != eventId
+                )
+                user.createdEvents = user.createdEvents.filter(
+                    (createdEvent) => createdEvent != eventId
                 )
                 await user.save()
             }

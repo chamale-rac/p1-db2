@@ -227,16 +227,13 @@ const getUserUpcomingEvents = async (req, res) => {
     try {
         const { id } = req.params
 
-        // const events = await User.findById(id).populate()
-        const events = await User.findById(id).populate('savedEvents')
-        // let upcomingEvents = []
-
-        // if (events && Array.isArray(events)) {
-        //     upcomingEvents = events.sort((a, b) => a.date - b.date);
-        //     upcomingEvents = upcomingEvents.slice(0, 3)
-        // }
-        // let upcomingEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date))
-        // upcomingEvents = upcomingEvents.slice(0, 3)
+        const events = await User.findById(id).populate({
+            path: 'savedEvents',
+            options: {
+                sort: { date: -1 },
+                limit: 3,
+            },
+        })
 
         res.status(200).json(events)
     } catch (error) {

@@ -15,7 +15,8 @@ const handleNewUser = async (req, res) => {
         return res.status(409).json({ message: 'Username already exists' })
 
     try {
-        const { username, name, lastname, email, password } = req.body
+        const { username, name, lastname, email, password, gender, age } =
+            req.body
         // Hash password
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -27,6 +28,8 @@ const handleNewUser = async (req, res) => {
             lastname: lastname,
             email: email,
             password: hashedPassword,
+            gender: gender,
+            age: age,
         })
 
         res.status(201).json({

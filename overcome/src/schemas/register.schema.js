@@ -15,6 +15,8 @@ const registerSchema = {
     name: Joi.string().pattern(NAME_REGEX),
     last_name: Joi.string().pattern(LNAME_REGEX),
     email: Joi.string().pattern(EMAIL_REGEX),
+    gender: Joi.string().pattern(/^(male|female|other)$/),
+    age: Joi.string().pattern(/^[0-9]{1,3}$/),
   }),
 
   initialValues: {
@@ -24,6 +26,8 @@ const registerSchema = {
     email: '',
     name: '',
     last_name: '',
+    gender: '',
+    age: '',
   },
 
   initialErrorMessages: {
@@ -33,6 +37,8 @@ const registerSchema = {
     email: false,
     name: false,
     last_name: false,
+    gender: false,
+    age: false,
   },
 
   initialErrorPrompts: {
@@ -45,6 +51,8 @@ const registerSchema = {
     name: 'Only letters and spaces are allowed.\nMaximum length is 50 characters.',
     last_name:
       'Only letters and spaces are allowed.\nMaximum length is 50 characters.',
+    gender: 'Must be one of the following: male, female, other',
+    age: 'Must be a number',
   },
 }
 

@@ -12,6 +12,7 @@ import SkeletonElement from '@components/skeletons/SkeletonElement'
 import Shimmer from '@components/skeletons/Shimmer'
 import ProfileLoader from './ProfileLoader/ProfileLoader'
 
+import { Toaster } from 'sonner'
 function Profile() {
   const [error, setError] = useState(null)
   const [profileLoading, setProfileLoading] = useState(true)
@@ -122,6 +123,7 @@ function Profile() {
 
   return (
     <div className={styles.container}>
+      <Toaster position="bottom-right" />
       <ControlledPopup
         title={'👥 Friend Requests'}
         isOpen={openRequestPopup}
@@ -242,6 +244,20 @@ function Profile() {
                 <Events events={user.savedEvents} inProfile={true} />
               ) : (
                 <div>No saved events found! 😔</div>
+              )}
+            </div>
+          </section>
+          <section>
+            <h2 className="text-4xl mt-6 mb-1">Created Events</h2>
+            <div className="grid grid-cols-1 gap-3 md:gap-6 divide-y divide-zinc-200 md:grid-cols-4">
+              {user?.createdEvents && user?.createdEvents.length > 0 ? (
+                <Events
+                  events={user.createdEvents}
+                  inProfile={true}
+                  deletable={true}
+                />
+              ) : (
+                <div>No created events found! 😔</div>
               )}
             </div>
           </section>

@@ -21,27 +21,8 @@ function HomePage() {
 
   useEffect(() => {
     /* console.log('SAVED EVENTS!!')*/
-    console.log("savedEvents",savedEvents)
+    console.log('savedEvents', savedEvents)
   }, [savedEvents])
-
-  useEffect(() => {
-    /* console.log('Var Chats:',chats)*/
-    console.log("if",(upcomingEvents.length > 0) && !upcomingEventsFiltered)
-    console.log("upcomingEvents",upcomingEvents)
-    // console.log("lenght",upcomingEvents.length > 0 && (!upcomingEventsFiltered))
-    if (upcomingEvents.length > 0 && (!upcomingEventsFiltered)) {
-      let newUpcomingEvents = upcomingEvents.sort((a, b) => {
-        return (new Date(a.date) - new Date(b.date))
-      })
-      .slice(0, 3).reverse()
-      newUpcomingEvents.forEach((event) => {
-        let date = new Date(event.date)
-        console.log("event date",date)
-      })
-      setUpcomingEventsFiltered(true)
-      setUpcomingEvents(newUpcomingEvents)
-    }
-  }, [upcomingEvents])
 
   // useEffect(() => {
   //   /* console.log(auth)*/

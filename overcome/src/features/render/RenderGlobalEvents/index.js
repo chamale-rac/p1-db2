@@ -1,2 +1,2 @@
-import GlobalEvents from "./GlobalEvents";
-export default GlobalEvents
+import UsersPage from './GlobalEvents'
+export default UsersPage

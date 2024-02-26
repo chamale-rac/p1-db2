@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import * as styles from './Event.module.css'
 import { authStore } from '@context'
 import { useApi } from '@hooks'
+import { toast } from 'sonner'
 
 function Event({
   name,
@@ -16,12 +17,39 @@ function Event({
   creator_id,
   inProfile = false,
   inOtherProfile = false,
+  deletable = false,
 }) {
   const { handleRequest } = useApi()
   const { auth } = authStore
   const [profileView, setProfileView] = useState(false)
-
+  const navigate = useNavigate()
   const [userEventStatus, setUserEventStatus] = useState(null)
+  const [deleted, setDeleted] = useState(false)
+
+  const deleteEvent = async () => {
+    try {
+      console.log('eventId :>> ', _id)
+      const response = await handleRequest(
+        'DELETE',
+        `/events/${_id}`,
+        {},
+        {
+          Authorization: 'Bearer ' + auth.authToken,
+        },
+        true,
+      )
+
+      toast.custom((t) => (
+        <div className={styles.toast}>✅ Event deleted successfully!</div>
+      ))
+      setDeleted(true)
+    } catch (error) {
+      console.log('error :>> ', error)
+      toast.custom((t) => (
+        <div className={styles.toast}>❌ Error deleting event</div>
+      ))
+    }
+  }
 
   const checkUserEventStatus = async () => {
     try {
@@ -100,7 +128,10 @@ function Event({
     checkUserEventStatus()
   }, [])
 
-  const navigate = useNavigate()
+  if (deleted) {
+    return null
+  }
+
   return (
     <>
       {profileView ? (
@@ -166,6 +197,14 @@ function Event({
                 >
                   Details 📃
                 </button>
+                {deletable && (
+                  <button
+                    className={`button asap`}
+                    onClick={() => deleteEvent()}
+                  >
+                    Delete 📝
+                  </button>
+                )}
               </>
             )}
           </div>

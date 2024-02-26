@@ -4,7 +4,7 @@ import Event from '@components/global/Event'
 import { authStore } from '@context'
 import { useApi } from '@hooks'
 
-const Events = ({ events, inProfile = false }) => {
+const Events = ({ events, inProfile = false, deletable = false }) => {
   const { handleRequest } = useApi()
   const { auth } = authStore
 
@@ -50,6 +50,7 @@ const Events = ({ events, inProfile = false }) => {
           }
           url={event?.link}
           inProfile={inProfile}
+          deletable={deletable}
         />
       ))}
     </>

@@ -26,7 +26,15 @@ const Register = ({ customStyles, successAction, failAction }) => {
     registerSchema.initialErrorPrompts,
   )
 
-  const postRegister = async (username, email, name, lastname, password) => {
+  const postRegister = async (
+    username,
+    email,
+    name,
+    lastname,
+    password,
+    gender,
+    age,
+  ) => {
     setLoading(true)
 
     const response = await handleRequest(
@@ -38,6 +46,8 @@ const Register = ({ customStyles, successAction, failAction }) => {
         lastname,
         email,
         password,
+        gender,
+        age,
       },
       {},
       true,
@@ -79,6 +89,8 @@ const Register = ({ customStyles, successAction, failAction }) => {
         form.values.name,
         form.values.last_name,
         form.values.password,
+        form.values.gender,
+        form.values.age,
       )
     }
   }
@@ -126,6 +138,24 @@ const Register = ({ customStyles, successAction, failAction }) => {
           label="Last name"
           type="text"
           error={form.errorMessages.last_name}
+          required
+        />
+        <Input
+          value={form.values.gender}
+          onChange={form.onChange('gender')}
+          name="gender"
+          label="gender"
+          type="text"
+          error={form.errorMessages.gender}
+          required
+        />
+        <Input
+          value={form.values.age}
+          onChange={form.onChange('age')}
+          name="age"
+          label="Age"
+          type="number"
+          error={form.errorMessages.age}
           required
         />
         <aside>
@@ -212,6 +242,8 @@ const Register = ({ customStyles, successAction, failAction }) => {
               form.values.email === '' ||
               form.values.name === '' ||
               form.values.last_name === '' ||
+              form.values.gender === '' ||
+              form.values.age === '' ||
               loading ||
               form.errorMessages.password
             }
