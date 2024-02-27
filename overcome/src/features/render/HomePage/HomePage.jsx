@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import * as styles from './HomePage.module.css'
 import { useState, useEffect } from 'react'
 import EventPreview from '../../../components/global/EventPreview'
@@ -17,6 +18,7 @@ function HomePage() {
     getSavedEvents()
     getChats()
     getUpcomingEvents()
+    getChatsMean()
   }, [])
 
   useEffect(() => {
@@ -72,6 +74,24 @@ function HomePage() {
     )
     /* console.log('RESPONSE CHATS!!', response.data)*/
     setChats(response.data)
+  }
+
+  const getChatsMean = async () => {
+    // const response = await handleRequest('GET', '/users/', {}, {}, true)
+    const userId = auth.user.id
+    const response = await handleRequest(
+      'post',
+      `/getChatsMessagesMean`,
+      {
+        userId,
+      },
+      {
+        Authorization: `Bearer ${auth.authToken}`,
+      },
+      true,
+    )
+    /* console.log('RESPONSE CHATS!!', response.data) */
+    console.log('getChatsMean:', response)
   }
 
   return (

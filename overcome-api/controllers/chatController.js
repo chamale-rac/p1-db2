@@ -135,6 +135,25 @@ const addMessage = async (chat_id, user_id, message) => {
     }
 }
 
+const getUserMessagesMeanByChat = async (req, res) => {
+    try {
+        const { userId } = req.body
+
+        console.log('chatsMean:', userId)
+
+        const userMessagesMeanByChat = await Chat.aggregate([
+            { $match: { participants: mongoose.Types.ObjectId(userId) } },
+            { $unwind: '$messages' },
+            { $group: { _id: '$_id', count: { $sum: 1 } } },
+            { $group: { _id: null, mean: { $avg: '$count' } } }
+        ])
+        
+        res.status(200).json(userMessagesMeanByChat)
+    } catch (error) {
+        res.status(404).json({ message: "Error getting mean." })
+    }
+}
+
 module.exports = function (io) {
     const chat = io.of('/chat')
 
@@ -186,6 +205,7 @@ module.exports = function (io) {
 
     return {
         newMessage: newMessage,
+        getUserMessagesMeanByChat: getUserMessagesMeanByChat,
         getLastChatsByUserId: async function (req, res) {
             try {
                 const { userId } = req.params

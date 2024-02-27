@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useRef } from 'react'
 import * as styles from './Chat.module.css'
 import ChatInput from './ChatInput/ChatInput'

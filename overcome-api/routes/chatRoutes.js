@@ -7,6 +7,7 @@ module.exports = function (io) {
     router.get('/messages/:userId', chatController.getLastChatsByUserId)
     router.get('/:id', chatController.getChatById)
     router.post('/message', chatController.newMessage)
+    router.post('/getChatsMessagesMean', chatController.getUserMessagesMeanByChat)
 
     return router
 }
