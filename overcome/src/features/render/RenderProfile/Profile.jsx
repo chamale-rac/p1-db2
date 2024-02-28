@@ -12,6 +12,8 @@ import SkeletonElement from '@components/skeletons/SkeletonElement'
 import Shimmer from '@components/skeletons/Shimmer'
 import ProfileLoader from './ProfileLoader/ProfileLoader'
 
+import { SERVER_BASE_URL } from '@utils/constants'
+
 import { Toaster } from 'sonner'
 function Profile() {
   const [error, setError] = useState(null)
@@ -26,6 +28,7 @@ function Profile() {
   const [openProfilePopup, setOpenProfilePopup] = useState(false)
   const [openInfoPopup, setOpenInfoPopup] = useState(false)
   const [openRequestPopup, setOpenRequestPopup] = useState(false)
+  const [userImage, setUserImage] = useState(null)
 
   const closeProfilePopup = () => setOpenProfilePopup(false)
   const closeInfoPopup = () => setOpenInfoPopup(false)
@@ -36,20 +39,26 @@ function Profile() {
   const editProfile = async (newImage) => {
     try {
       setLoading(true)
+
+      console.log('newImage', newImage)
+      const formData = new FormData()
+      formData.append('image', newImage)
+
       const response = await handleRequest(
         'POST',
-        `/users/editInfo/${auth.user.id}`,
-        {
-          profilePicture: newImage,
-        },
+        `/images/upload/${auth.user.id}`,
+        formData,
         {
           Authorization: 'Bearer ' + auth.authToken,
         },
         true,
       )
+      console.log('upload response data', response.data)
+      console.log('upload response', response)
       /* console.log(response.data)*/
       // add just a new field or update the profilePicture field
-      setUser({ ...user, profilePicture: newImage })
+      setUser({ ...user })
+      setUserImage(URL.createObjectURL(newImage))
       image.result = ''
     } catch (error) {
       console.error(error)
@@ -96,7 +105,26 @@ function Profile() {
     )
     /* console.log('USER!!!', response)*/
     setUser(response.data)
+
+    getImage(response.data.profilePicture ?? null)
+
     setProfileLoading(false)
+  }
+
+  const getImage = async (imageId) => {
+    if (imageId) {
+      try {
+        console.log('imageId', imageId)
+        const response = await fetch(`
+        ${SERVER_BASE_URL}/images/image/${imageId}
+        `)
+        const blob = await response.blob()
+        const imageUrl = URL.createObjectURL(blob)
+        setUserImage(imageUrl)
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    }
   }
 
   useEffect(() => {
@@ -108,14 +136,6 @@ function Profile() {
       userid: auth.user.id,
     })
   }, [auth])
-
-  useEffect(() => {
-    console.log('Var user', user)
-  }, [user])
-
-  useEffect(() => {
-    /* console.log(users)*/
-  }, [users])
 
   useEffect(() => {
     getUsers()
@@ -143,7 +163,7 @@ function Profile() {
           </div>
         ) : (
           <ImageCustomizer
-            actualImage={user.profilePicture ?? '/profile-400.png'}
+            actualImage={userImage ?? '/profile-400.png'}
             saveNewImage={handleSaveImage}
           />
         )}
@@ -164,7 +184,7 @@ function Profile() {
           }}
         />
       </ControlledPopup>
-      <div className="w-full flex flex-row justify-end gap-2 text-xs md:text-sm">
+      <div className="flex flex-row justify-end w-full gap-2 text-xs md:text-sm">
         <button
           type="button"
           onClick={() => {
@@ -193,27 +213,27 @@ function Profile() {
       </div>
       {!profileLoading ? (
         <>
-          <div className="flex w-full flex-col justify-start mt-4">
+          <div className="flex flex-col justify-start w-full mt-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 md:gap-4 ">
-                <div className="relative h-20 w-20 md:h-24 md:w-24 object-cover">
+                <div className="relative object-cover w-20 h-20 md:h-24 md:w-24">
                   <img
-                    src={user.profilePicture ?? '/profile-400.png'}
+                    src={userImage ?? '/profile-400.png'}
                     alt="Profile Image"
-                    className="rounded-full object-fill shadow-2xl h-20 w-20 md:h-24 md:w-24"
+                    className="object-fill w-20 h-20 rounded-full shadow-2xl md:h-24 md:w-24"
                   />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-left  font-bold text-light-1 text-3xl md:text-5xl">
+                  <h2 className="text-3xl font-bold text-left text-light-1 md:text-5xl">
                     {`${user.name} ${user.lastname}`}
                   </h2>
-                  <p className="font-medium text-gray-500 text-base md:text-xl  ">
+                  <p className="text-base font-medium text-gray-500 md:text-xl ">
                     @{user.username}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="mt-6 max-w-lg text-light-2 ml-2 xs:ml-0 text-xs md:text-base">
+            <div className="max-w-lg mt-6 ml-2 text-xs text-light-2 xs:ml-0 md:text-base">
               <p className="text-left">
                 <span className="font-bold">Interests:</span>{' '}
                 {Array.isArray(user?.interests) && user?.interests.length > 0
@@ -230,16 +250,16 @@ function Profile() {
             <div className="mt-6 h-0.5 w-full bg-black" />
           </div>
           <section>
-            <h2 className="text-4xl mt-6 mb-1">Joined Hooks</h2>
-            <div className="grid grid-cols-1 gap-3 md:gap-6 divide-y divide-zinc-200 md:grid-cols-4">
+            <h2 className="mt-6 mb-1 text-4xl">Joined Hooks</h2>
+            <div className="grid grid-cols-1 gap-3 divide-y md:gap-6 divide-zinc-200 md:grid-cols-4">
               {user?.joinedEvents && user?.joinedEvents.length > 0 ? (
                 <Events events={user.joinedEvents} inProfile={true} />
               ) : (
                 <div>No joined events found! 😔</div>
               )}
             </div>
-            <h2 className="text-4xl mt-6 mb-1">Saved Hooks</h2>
-            <div className="grid grid-cols-1 gap-3 md:gap-6 divide-y divide-zinc-200 md:grid-cols-4">
+            <h2 className="mt-6 mb-1 text-4xl">Saved Hooks</h2>
+            <div className="grid grid-cols-1 gap-3 divide-y md:gap-6 divide-zinc-200 md:grid-cols-4">
               {user?.savedEvents && user?.savedEvents.length > 0 ? (
                 <Events events={user.savedEvents} inProfile={true} />
               ) : (
@@ -248,8 +268,8 @@ function Profile() {
             </div>
           </section>
           <section>
-            <h2 className="text-4xl mt-6 mb-1">Created Events</h2>
-            <div className="grid grid-cols-1 gap-3 md:gap-6 divide-y divide-zinc-200 md:grid-cols-4">
+            <h2 className="mt-6 mb-1 text-4xl">Created Events</h2>
+            <div className="grid grid-cols-1 gap-3 divide-y md:gap-6 divide-zinc-200 md:grid-cols-4">
               {user?.createdEvents && user?.createdEvents.length > 0 ? (
                 <Events
                   events={user.createdEvents}

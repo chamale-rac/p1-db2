@@ -17,11 +17,12 @@ const ImageCustomizer = ({ actualImage = '', saveNewImage }) => {
   const [file, setFile] = useState('')
   const [prompt, setPrompt] = useState('')
   const [generatingImg, setGeneratingImg] = useState(false)
+  const [imageOriginalFormat, setImageOriginalFormat] = useState('')
 
   const handleSaveImage = () => {
     const newImage = snap.result
     /* console.log('SAVING')*/
-    saveNewImage(newImage)
+    saveNewImage(imageOriginalFormat)
   }
 
   const handleStoreImage = (result) => {
@@ -55,6 +56,7 @@ const ImageCustomizer = ({ actualImage = '', saveNewImage }) => {
     reader(uploadedFile).then((result) => {
       handleStoreImage(result)
     })
+    setImageOriginalFormat(uploadedFile)
   }
 
   return (
@@ -86,13 +88,13 @@ const ImageCustomizer = ({ actualImage = '', saveNewImage }) => {
         }}
       >
         <FilePicker file={file} setFile={setFile} readFile={readFile} />
-
+        {/* 
         <AIPicker
           prompt={prompt}
           setPrompt={setPrompt}
           generatingImg={generatingImg}
           handleSubmit={handleSubmit}
-        />
+        /> */}
       </div>
       <div className={styles.buttonsContainer}>
         {snap.result && !generatingImg && (
