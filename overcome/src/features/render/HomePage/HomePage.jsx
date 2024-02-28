@@ -76,24 +76,6 @@ function HomePage() {
     setChats(response.data)
   }
 
-  const getChatsMean = async () => {
-    // const response = await handleRequest('GET', '/users/', {}, {}, true)
-    const userId = auth.user.id
-    const response = await handleRequest(
-      'post',
-      `/getChatsMessagesMean`,
-      {
-        userId,
-      },
-      {
-        Authorization: `Bearer ${auth.authToken}`,
-      },
-      true,
-    )
-    /* console.log('RESPONSE CHATS!!', response.data) */
-    console.log('getChatsMean:', response)
-  }
-
   return (
     <div className={styles.container}>
       <h1>Welcome back {auth.user.username}!</h1>

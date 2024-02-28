@@ -3,6 +3,7 @@ const Event = require('../models/eventModel')
 const User = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 const cookie = require('cookie')
+const mongoose = require('mongoose');
 
 const newMessage = async (req, res) => {
     try {
@@ -142,7 +143,7 @@ const getUserMessagesMeanByChat = async (req, res) => {
         console.log('chatsMean:', userId)
 
         const userMessagesMeanByChat = await Chat.aggregate([
-            { $match: { participants: mongoose.Types.ObjectId(userId) } },
+            { $match: { participants: new mongoose.Types.ObjectId(userId) } },
             { $unwind: '$messages' },
             { $group: { _id: '$_id', count: { $sum: 1 } } },
             { $group: { _id: null, mean: { $avg: '$count' } } }
@@ -150,7 +151,8 @@ const getUserMessagesMeanByChat = async (req, res) => {
         
         res.status(200).json(userMessagesMeanByChat)
     } catch (error) {
-        res.status(404).json({ message: "Error getting mean." })
+        console.log("Error getting mean.", error)
+        res.status(500).json({ message: "Error getting mean." })
     }
 }
 
