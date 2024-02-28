@@ -13,6 +13,7 @@ function HomePage() {
   const [upcomingEvents, setUpcomingEvents] = useState([])
   const [upcomingEventsFiltered, setUpcomingEventsFiltered] = useState(false)
   const [chats, setChats] = useState([])
+  const [chatMessagesMean, setChatMessagesMean] = useState(0)
 
   useEffect(() => {
     getSavedEvents()
@@ -76,6 +77,25 @@ function HomePage() {
     setChats(response.data)
   }
 
+  const getChatsMean = async () => {
+    // const response = await handleRequest('GET', '/users/', {}, {}, true)
+    const userId = auth.user.id
+    const response = await handleRequest(
+      'post',
+      `/chats/getChatsMessagesMean`,
+      {
+        userId,
+      },
+      {
+        Authorization: `Bearer ${auth.authToken}`,
+      },
+      true,
+    )
+    /* console.log('RESPONSE CHATS!!', response.data) */
+    console.log('getChatsMean:', response)
+    setChatMessagesMean(response.data[0].mean)
+  }
+
   return (
     <div className={styles.container}>
       <h1>Welcome back {auth.user.username}!</h1>
@@ -98,7 +118,12 @@ function HomePage() {
           <ChatPreview chats={chats} />
         </div>
         <div className={styles.boardItem}>
-          <h1>+</h1>
+          <h3>📉 Aggregation Stats:</h3>
+          <ul>
+            <li>
+              <p className={`${styles.border}`}>Chat messages mean: {chatMessagesMean}</p>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

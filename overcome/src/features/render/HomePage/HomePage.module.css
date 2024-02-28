@@ -78,7 +78,7 @@
   width: 18rem;
   margin: auto 0;
 }
-
+/* 
 .boardItem:last-child {
   display: flex;
   align-content: center;
@@ -96,7 +96,7 @@
 
 .boardItem:last-child h1 {
   align-self: center;
-}
+} */
 
 /*  less than 600 px */
 @media (max-width: 600px) {
@@ -115,4 +115,15 @@
   padding: 0 !important;
   border: 1px solid transparent !important;
   box-shadow: none !important;
+}
+
+.border {
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  height: fit-content;
+  background-color: white;
+  padding: 8px;
+  margin: 1rem 0;
 }
