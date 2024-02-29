@@ -125,6 +125,7 @@ const getCommonFriends = async (req, res) => {
         const commonFriends = await User.aggregate([
             { $match: { _id: { $in: [mongoose.Types.ObjectId(userId1), mongoose.Types.ObjectId(userId2)] } } },
             { $unwind: '$relations' },
+            { $match: { 'relations.state': 'accepted' } },
             { $group: { _id: '$_id', friends: { $push: '$relations.user' } } },
             { $group: { _id: null, common: { $setIntersection: ['$friends'] } } },
             { $unwind: '$common' },
