@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt')
 var cloudinary = require('cloudinary').v2
+const mongoose = require('mongoose')
 
 const getAllUsers = async (req, res) => {
     const {
@@ -123,20 +124,55 @@ const getCommonFriends = async (req, res) => {
         const { userId1, userId2 } = req.body
 
         const commonFriends = await User.aggregate([
-            { $match: { _id: { $in: [mongoose.Types.ObjectId(userId1), mongoose.Types.ObjectId(userId2)] } } },
-            { $unwind: '$relations' },
-            { $group: { _id: '$_id', friends: { $push: '$relations.user' } } },
-            { $group: { _id: null, common: { $setIntersection: ['$friends'] } } },
-            { $unwind: '$common' },
-            { $lookup: { from: 'users', localField: 'common', foreignField: '_id', as: 'common' } },
-            { $unwind: '$common' },
-            { $group: { _id: null, commonFriendsAmount: { $sum: 1 }, commonFriends: { $push: { id: '$common._id', displayName: '$common.username' } } } }
+            {
+                $match: {
+                    _id: {
+                        $in: [
+                            new mongoose.Types.ObjectId(userId1),
+                            new mongoose.Types.ObjectId(userId2),
+                        ],
+                    },
+                },
+            },
+            {
+                $unwind: '$relations',
+            },
+            {
+                $match: {
+                    'relations.state': 'accepted',
+                },
+            },
+            {
+                $group: {
+                    _id: '$relations.user',
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $match: {
+                    count: { $eq: 2 },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $unwind: '$user',
+            },
+            {
+                $replaceRoot: { newRoot: '$user' },
+            },
         ])
-        
-        res.status(200).json(commonFriends[0])
+
+        res.json(commonFriends)
     } catch (error) {
-        console.log("Error getting common friends.", error)
-        res.status(500).json({ message: "Error getting common friends." })
+        console.log('Error getting common friends.', error)
+        res.status(500).json({ message: 'Error getting common friends.' })
     }
 }
 
