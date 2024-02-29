@@ -118,6 +118,28 @@ const addFriend = async (req, res) => {
     }
 }
 
+const getCommonFriends = async (req, res) => {
+    try {
+        const { userId1, userId2 } = req.body
+
+        const commonFriends = await User.aggregate([
+            { $match: { _id: { $in: [mongoose.Types.ObjectId(userId1), mongoose.Types.ObjectId(userId2)] } } },
+            { $unwind: '$relations' },
+            { $group: { _id: '$_id', friends: { $push: '$relations.user' } } },
+            { $group: { _id: null, common: { $setIntersection: ['$friends'] } } },
+            { $unwind: '$common' },
+            { $lookup: { from: 'users', localField: 'common', foreignField: '_id', as: 'common' } },
+            { $unwind: '$common' },
+            { $group: { _id: null, commonFriendsAmount: { $sum: 1 }, commonFriends: { $push: { id: '$common._id', displayName: '$common.username' } } } }
+        ])
+        
+        res.status(200).json(commonFriends[0])
+    } catch (error) {
+        console.log("Error getting common friends.", error)
+        res.status(500).json({ message: "Error getting common friends." })
+    }
+}
+
 const editInfo = async (req, res) => {
     // TODO: fix, this is not secure, anyone can edit anyone's info
     /**
@@ -370,4 +392,5 @@ module.exports = {
     joinEvent,
     removeJoinedEvent,
     getUserUpcomingEvents,
+    getCommonFriends,
 }

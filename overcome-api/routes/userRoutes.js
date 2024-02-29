@@ -17,6 +17,7 @@ router.post('/removeSavedEvent', userController.removeSavedEvent);
 router.post('/removeJoinedEvent', userController.removeJoinedEvent);
 
 router.post('/addFriend', userController.addFriend)
+router.post('/commonFriends', userController.getCommonFriends)
 // TODO:fix, this is not secure, anyone can edit anyone's info
 router.post('/editInfo/:id', userController.editInfo)
 router.post('/checkEvent/:id', userController.checkUserEventStatus)
