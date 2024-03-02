@@ -3,6 +3,7 @@ import { useApi } from '@hooks'
 import * as styles from './GlobalReports.module.css'
 import Reports from '../Reports/Reports'
 import { ClockLoader } from '@components/global'
+import { EventBulk } from '@features/creation'
 
 function GlobalReports() {
   const [reports, setReports] = useState([])
@@ -51,9 +52,12 @@ function GlobalReports() {
         </div>
       )}
       <hr className="w-11/12 mx-auto my-8 bg-gray-200 border-t-2 border-gray-800 "></hr>
-      <div className={`${styles.flexContainer} flex flex-col items-start`}>
+      <div
+        className={`${styles.flexContainer} flex flex-col items-start gap-4`}
+      >
         <h1>Massive events creation</h1>
         <h2>Admin privileges 🤓</h2>
+        <EventBulk />
       </div>
     </div>
   )

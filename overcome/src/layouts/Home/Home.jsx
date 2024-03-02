@@ -56,6 +56,11 @@ const Home = () => {
       icon: '🎫',
     },
     {
+      name: 'Charts',
+      path: '/home/charts',
+      icon: '📊',
+    },
+    {
       name: 'News',
       path: '/.',
       icon: '🔔',

@@ -50,7 +50,7 @@ const sendUniqueCode = async (req, res) => {
         await recover.save()
 
         const data = await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [email],
             subject: '¡Código de recuperación de contraseña! 🙊',
             html: `

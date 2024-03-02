@@ -37,7 +37,7 @@ const createReport = async (req, res) => {
 
         console.log(reporterEmail)
         const data = await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [reporterEmail],
             subject: '¡Detalles de tu reporte! 🆘',
             html: `
@@ -77,7 +77,7 @@ const createReport = async (req, res) => {
         })
 
         await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [reportedEmail],
             subject: 'Tienes un nuevo reporte ⚠️',
             html: `
@@ -171,7 +171,7 @@ const deleteEventReports = async (eventId) => {
         const emailOwner = event.creator.email
 
         await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [emailOwner],
             subject: 'Resolución de Reporte 📄',
             html: `
@@ -222,7 +222,7 @@ const deleteEventReports = async (eventId) => {
             reporterEmail = reporterEmail.email
 
             await resend.emails.send({
-                from: 'Overcome <sender@app-overcome.schr.tech>',
+                from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
                 to: [reporterEmail],
                 subject: 'Resolución de Reporte 📄',
                 html: `
@@ -293,7 +293,7 @@ const closeEventReportById = async (req, res) => {
         const emailOwner = event.creator.email
 
         await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [reporterEmail],
             subject: 'Resolución de Reporte 📄',
             html: `
@@ -329,7 +329,7 @@ const closeEventReportById = async (req, res) => {
         })
 
         await resend.emails.send({
-            from: 'Overcome <sender@app-overcome.schr.tech>',
+            from: `Overcome <sender@${process.env.RESEND_DOMAIN}>`,
             to: [emailOwner],
             subject: 'Resolución de Reporte 📄',
             html: `

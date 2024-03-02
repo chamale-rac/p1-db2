@@ -10,6 +10,7 @@ const userRelationRoutes = require('./routes/userRelationRoutes')
 const recoverRoutes = require('./routes/recoverRoutes')
 const reportRoutes = require('./routes/reportRoutes')
 const imageRoutes = require('./routes/imageRoutes')
+const bulkRoutes = require('./routes/bulkRoutes')
 
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
@@ -55,15 +56,7 @@ app.use('/recover', recoverRoutes)
 app.use('/reports', reportRoutes)
 app.use('/users', imageRoutes)
 app.use('/images', imageRoutes)
-
-/*
-Checking middleware
-app.use((req, res, next) => {
-    (req.headers.cookie)
-    (req.cookies)
-    next()
-})
-*/
+app.use('/bulk', bulkRoutes)
 
 mongoose
     .connect(process.env.DATABASE_URI, {

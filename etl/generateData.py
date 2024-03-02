@@ -12,8 +12,8 @@ start_time = time.time()
 PASSWORD = "$2b$10$giSkSavq9kT1h3TxE/NryetqRpXhCL7qj1z9nlIPMvx.Zs5nM4Pmy"
 
 USERS = 15000
-EVENTS = 70000
-RELATIONSHIPS = 50000
+EVENTS = 50000
+RELATIONSHIPS = 40000
 
 fake = Faker()
 
