@@ -28,8 +28,20 @@ const getAllUsers = async (req, res) => {
             if (user) {
                 matchStage = {
                     $or: [
-                        { interests: { $in: user.interests } },
-                        { favorites: { $in: user.favorites } },
+                        {
+                            interests: {
+                                $in: user.interests.map(
+                                    (tag) => new RegExp(tag, 'i')
+                                ),
+                            },
+                        },
+                        {
+                            favorites: {
+                                $in: user.favorites.map(
+                                    (tag) => new RegExp(tag, 'i')
+                                ),
+                            },
+                        },
                     ],
                 }
             }

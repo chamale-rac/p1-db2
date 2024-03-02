@@ -106,7 +106,7 @@ const searchEvents = async (req, res) => {
 
             pipeline.push({
                 $match: {
-                    tags: { $in: userTags },
+                    tags: { $in: userTags.map((tag) => new RegExp(tag, 'i')) },
                 },
             })
         }
@@ -124,8 +124,8 @@ const searchEvents = async (req, res) => {
         // Case when search is not empty, use all the tags, startDate, endDate, dateSort, durationSort, and joinable
         let matchQuery = {}
         if (tags.length > 0) {
-            console.log('tags', tags)
-            matchQuery.tags = { $in: tags }
+            console.log('tagsasd', tags)
+            matchQuery.tags = { $in: tags.map((tag) => new RegExp(tag, 'i')) }
         }
 
         if (startDate && endDate) {
@@ -150,7 +150,11 @@ const searchEvents = async (req, res) => {
         if (joinable) {
             matchQuery.$expr = {
                 $lt: [{ $size: '$participants' }, '$limit'],
-            }
+            } // This means that the event is joinable, cause the number of participants is less than the limit
+        } else {
+            matchQuery.$expr = {
+                $eq: [{ $size: '$participants' }, '$limit'],
+            } // This means that the event is not joinable, cause the number of participants is equal to the limit
         }
 
         pipeline.push({ $match: matchQuery })
@@ -161,13 +165,16 @@ const searchEvents = async (req, res) => {
             { $count: 'totalResults' },
         ])
 
+        let sort = {}
         // Apply sorting
         if (dateSort) {
-            pipeline.push({ $sort: { date: dateSort } })
+            sort.date = parseInt(dateSort)
         }
-
         if (durationSort) {
-            pipeline.push({ $sort: { duration: durationSort } })
+            sort.duration = parseInt(durationSort)
+        }
+        if (Object.keys(sort).length > 0) {
+            pipeline.push({ $sort: sort })
         }
 
         // Apply offset and limit

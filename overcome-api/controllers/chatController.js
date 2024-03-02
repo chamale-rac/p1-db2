@@ -77,7 +77,10 @@ const newMessage = async (req, res) => {
 const addMessage = async (chat_id, user_id, message) => {
     try {
         // verify user is part of chat
+        console.log('chat_id',chat_id)
+
         const chat = await Chat.findById(chat_id)
+        console.log(chat._id)
         if (!chat.participants.includes(user_id)) {
             console.log('User is not part of chat')
         }

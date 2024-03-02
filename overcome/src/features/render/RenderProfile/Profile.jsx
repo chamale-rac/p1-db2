@@ -104,9 +104,26 @@ function Profile() {
       true,
     )
     /* console.log('USER!!!', response)*/
+    console.log('USER!!!', response.data)
     setUser(response.data)
 
-    getImage(response.data.profilePicture ?? null)
+    if (user.profilePicture) {
+      // If not includes http or https, then it's a local image
+      if (
+        !user.profilePicture.includes('http') &&
+        !user.profilePicture.includes('https')
+      ) {
+        console.log('local image')
+        const imageUrl = await getImage(user.profilePicture)
+        setUser(
+          (prev) => ({
+            ...prev,
+            profilePicture: imageUrl,
+          }),
+          console,
+        )
+      }
+    }
 
     setProfileLoading(false)
   }
@@ -120,7 +137,7 @@ function Profile() {
         `)
         const blob = await response.blob()
         const imageUrl = URL.createObjectURL(blob)
-        setUserImage(imageUrl)
+        return imageUrl
       } catch (error) {
         console.error('Error:', error)
       }
@@ -137,9 +154,9 @@ function Profile() {
     })
   }, [auth])
 
-  useEffect(() => {
-    getUsers()
-  }, [])
+  // useEffect(() => {
+  //   getUsers()
+  // }, [])
 
   return (
     <div className={styles.container}>
@@ -163,7 +180,7 @@ function Profile() {
           </div>
         ) : (
           <ImageCustomizer
-            actualImage={userImage ?? '/profile-400.png'}
+            actualImage={user.profilePicture ?? '/profile-400.png'}
             saveNewImage={handleSaveImage}
           />
         )}
@@ -218,7 +235,7 @@ function Profile() {
               <div className="flex items-center gap-2 md:gap-4 ">
                 <div className="relative object-cover w-20 h-20 md:h-24 md:w-24">
                   <img
-                    src={userImage ?? '/profile-400.png'}
+                    src={user.profilePicture ?? '/profile-400.png'}
                     alt="Profile Image"
                     className="object-fill w-20 h-20 rounded-full shadow-2xl md:h-24 md:w-24"
                   />

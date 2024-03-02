@@ -6,6 +6,7 @@ import * as styles from './UserPage.module.css'
 import { authStore } from '@context'
 import { Events } from '@features/render'
 import Report from '@features/creation/Report/Report'
+import { SERVER_BASE_URL } from '@utils/constants'
 
 const UserPage = ({ isCreator = true, user_id = null }) => {
   const [openProfilePopup, setOpenProfilePopup] = useState(false)
@@ -95,6 +96,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
       )
       /* console.log(response.data)*/
       setFriendResponse(response.data)
+
       checkFriendStatus()
     } catch (error) {
       console.error(error)
@@ -122,8 +124,11 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
         },
         true,
       )
-      /* console.log(response.data)*/
+      console.log('USER', response.data)
       setUser(response.data)
+
+      // Check if user contains http:// or https:// in .profilePicture
+
       checkFriendStatus()
       getCommonFriends()
     } catch (error) {
@@ -133,6 +138,47 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    handleGetImage()
+  }, [user])
+
+  const handleGetImage = async () => {
+    if (user.profilePicture) {
+      // If not includes http or https, then it's a local image
+      if (
+        !user.profilePicture.includes('http') &&
+        !user.profilePicture.includes('https')
+      ) {
+        console.log('local image')
+        const imageUrl = await getImage(user.profilePicture)
+        console.log('xd')
+        setUser(
+          (prev) => ({
+            ...prev,
+            profilePicture: imageUrl,
+          }),
+          console,
+        )
+      }
+    }
+  }
+
+  const getImage = async (imageId) => {
+    if (imageId) {
+      try {
+        console.log('imageId', imageId)
+        const response = await fetch(`
+        ${SERVER_BASE_URL}/images/image/${imageId}
+        `)
+        const blob = await response.blob()
+        const imageUrl = URL.createObjectURL(blob)
+        return imageUrl
+      } catch (error) {
+        console.error('Error:', error)
+      }
     }
   }
 
@@ -211,8 +257,9 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
                   @{user?.username} {user?._id === auth.user.id && '(You)'}
                 </h2>
                 <h3>
-                  {commonFriends?.length > 0 &&
-                    `Common friends: ${commonFriends.length}`}
+                  {commonFriends?.length > 0
+                    ? `Common friends: ${commonFriends.length}`
+                    : `No common friends found`}
                 </h3>
                 <div className={styles.buttonWrapper}>
                   <div className={styles.buttonOutside}>

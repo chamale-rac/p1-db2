@@ -118,6 +118,10 @@ const UsersPage = () => {
     }
   }
 
+  function setLimitInt(limit) {
+    setLimit(parseInt(limit))
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.flexContainer}>
@@ -200,7 +204,7 @@ const UsersPage = () => {
             customStyles=""
             options={[10, 20, 30, 50]}
             selected={limit}
-            setSelected={setLimit}
+            setSelected={setLimitInt}
           />
         </div>
       </div>

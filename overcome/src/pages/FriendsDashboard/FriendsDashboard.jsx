@@ -82,6 +82,7 @@ const FriendsDashboard = () => {
         true,
       )
       /* console.log('friendResponse LISt', friendsResponse.data)*/
+      console.log('friendsResponse', friendsResponse)
       setRelationsFriends(friendsResponse.data)
     } catch (error) {
       console.error(error)

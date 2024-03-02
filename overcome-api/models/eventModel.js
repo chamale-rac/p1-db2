@@ -14,15 +14,6 @@ const eventSchema = new mongoose.Schema({
     hour: {
         type: String,
         required: true,
-        validate: {
-            validator: function (value) {
-                // Validate that the hour string has a valid format of "HH:mm"
-                const pattern = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
-                return pattern.test(value)
-            },
-            message: (props) =>
-                `${props.value} is not a valid time in the format HH:mm!`,
-        },
     },
     link: { type: String, required: false },
     chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },

@@ -141,6 +141,9 @@ const friendStatus = async (req, res) => {
         const user = await User.findById(req.body.id)
         const friend = await User.findById(req.body.friend_id)
 
+        console.log('user', user)
+        console.log('friend', friend)
+
         const userRelation = user.relations.find(
             (relation) => relation.user.toString() === friend._id.toString()
         )
@@ -170,6 +173,7 @@ const friendStatus = async (req, res) => {
             res.status(200).json({ isFriend: false })
         }
     } catch (err) {
+        console.log(err)
         res.status(400).json({ message: err.message })
     }
 }

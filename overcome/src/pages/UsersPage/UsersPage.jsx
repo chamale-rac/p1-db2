@@ -73,6 +73,10 @@ const UsersPage = () => {
     getAllUsers()
   }, [limit, offset])
 
+  function setLimitInt(limit) {
+    setLimit(parseInt(limit))
+  }
+
   return (
     <div className={styles.container}>
       <h2 className={`${styles.title} font-bebas-neue`}>Find new friends</h2>
@@ -95,19 +99,19 @@ const UsersPage = () => {
             customStyles="p-4 mt-0 ml-2"
             options={[10, 20, 30, 50]}
             selected={limit}
-            setSelected={setLimit}
+            setSelected={setLimitInt}
           />
         </div>
 
         {allUsers && !loading ? (
           <>
-            <div className="border m-2 p-2 mt-4 shadow-md flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center justify-between p-2 m-2 mt-4 border shadow-md">
               {/**
                 add button to get previous users, if possible, and other button to get next users if possible
                 */}
 
               <button
-                className="button asap p-2 rounded-md"
+                className="p-2 rounded-md button asap"
                 onClick={() => {
                   if (offset - limit >= 0) {
                     setOffset(offset - limit)
@@ -136,7 +140,7 @@ const UsersPage = () => {
               </div>
 
               <button
-                className="button asap p-2 rounded-md"
+                className="p-2 rounded-md button asap"
                 onClick={() => {
                   if (offset + limit < totalResults) {
                     setOffset(offset + limit)
