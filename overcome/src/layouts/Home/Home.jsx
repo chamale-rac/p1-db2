@@ -35,7 +35,7 @@ const Home = () => {
       icon: '📝',
     },
     {
-      name: 'Reports',
+      name: 'Admin',
       path: '/home/reports',
       icon: '🗂️',
       hidden: !isAdmin,
@@ -283,7 +283,7 @@ const Home = () => {
               <div className="mb-2 w-100% flex justify-end">
                 <button
                   onClick={() => handleShowOffAll()}
-                  className="mr-1 mb-1 hover:underline cursor-pointer"
+                  className="mb-1 mr-1 cursor-pointer hover:underline"
                 >
                   Clear all
                 </button>

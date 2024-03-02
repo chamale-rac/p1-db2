@@ -32,8 +32,9 @@ function GlobalReports() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.flexContainer}>
-        <h1>Reports</h1>
+      <div className={`${styles.flexContainer} flex flex-col items-start`}>
+        <h1>Help the community</h1>
+        <h2>Solving one report at a time!</h2>
       </div>
 
       {reports.length > 0 ? (
@@ -49,6 +50,11 @@ function GlobalReports() {
           No reports found! 😔
         </div>
       )}
+      <hr className="w-11/12 mx-auto my-8 bg-gray-200 border-t-2 border-gray-800 "></hr>
+      <div className={`${styles.flexContainer} flex flex-col items-start`}>
+        <h1>Massive events creation</h1>
+        <h2>Admin privileges 🤓</h2>
+      </div>
     </div>
   )
 }

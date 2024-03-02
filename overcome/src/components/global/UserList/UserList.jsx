@@ -121,6 +121,18 @@ const UserList = ({
                 >
                   🗑️
                 </button>
+                {/**See profile */}
+                <button
+                  className="button asap"
+                  onClick={() => navigate(`/home/users/${relation.user._id}`)}
+                  style={{
+                    borderRadius: '10px',
+                    padding: '0.1rem 0.4rem',
+                    fontSize: '10px',
+                  }}
+                >
+                  📑
+                </button>
                 <button
                   className="button asap"
                   onClick={() =>
