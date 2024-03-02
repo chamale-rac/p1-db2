@@ -11,8 +11,8 @@ start_time = time.time()
 PASSWORD = "$2b$10$giSkSavq9kT1h3TxE/NryetqRpXhCL7qj1z9nlIPMvx.Zs5nM4Pmy"
 
 USERS = 10000
-EVENTS = 70000
-RELATIONSHIPS = 50000
+EVENTS = 55000
+RELATIONSHIPS = 40000
 
 fake = Faker()
 
@@ -100,8 +100,8 @@ def generate_events(user_ids):
     for _ in range(EVENTS):
         creator = choice(user_ids)
         participants = [creator]
-        participants.extend([choice(user_ids) for _ in range(randint(1, 20))])
-        savers = [choice(user_ids) for _ in range(randint(1, 5))]
+        participants.extend([choice(user_ids) for _ in range(randint(1, 10))])
+        savers = [choice(user_ids) for _ in range(randint(1, 4))]
         chatId = str(ObjectId())
         eventId = str(ObjectId())
 
@@ -121,7 +121,7 @@ def generate_events(user_ids):
 
         # Generate messages: [{message, user, sent_at}] using the participants
         messages = []
-        for _ in range(randint(1, 30)):
+        for _ in range(randint(1, 10)):
             message = {
                 "message": fake.text(),
                 "user": choice(participants),
