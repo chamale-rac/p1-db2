@@ -9,6 +9,7 @@ import {
   UserPage,
   FriendsDashboard,
   UsersPage,
+  Charts,
 } from '@pages'
 
 import { Home } from '@layouts'
@@ -57,6 +58,7 @@ function App() {
           <Route path="/home/friends" element={<FriendsDashboard />} />
           <Route path="/home/users" element={<UsersPage />} />
           <Route path="/home/users/:creator_id" element={<UserPage />} />
+          <Route path="/home/charts" element={<Charts />} />
 
           <Route element={<RequireAuth type="Admin" />}>
             <Route path="/home/reports" element={<GlobalReports />} />
