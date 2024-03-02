@@ -24,8 +24,12 @@ const userSchema = new mongoose.Schema({
             chat_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
         },
     ],
-    savedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
-    joinedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
+    savedEvents: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+    ],
+    joinedEvents: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+    ],
     profilePicture: { type: String, required: false },
     notifications: [
         {

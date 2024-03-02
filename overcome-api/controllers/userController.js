@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt')
 var cloudinary = require('cloudinary').v2
+const mongoose = require('mongoose')
 
 const getAllUsers = async (req, res) => {
     const {
@@ -115,6 +116,63 @@ const addFriend = async (req, res) => {
     } catch (error) {
         console.error(error)
         res.status(500).send('Error saving event to user')
+    }
+}
+
+const getCommonFriends = async (req, res) => {
+    try {
+        const { userId1, userId2 } = req.body
+
+        const commonFriends = await User.aggregate([
+            {
+                $match: {
+                    _id: {
+                        $in: [
+                            new mongoose.Types.ObjectId(userId1),
+                            new mongoose.Types.ObjectId(userId2),
+                        ],
+                    },
+                },
+            },
+            {
+                $unwind: '$relations',
+            },
+            {
+                $match: {
+                    'relations.state': 'accepted',
+                },
+            },
+            {
+                $group: {
+                    _id: '$relations.user',
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $match: {
+                    count: { $eq: 2 },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $unwind: '$user',
+            },
+            {
+                $replaceRoot: { newRoot: '$user' },
+            },
+        ])
+
+        res.json(commonFriends)
+    } catch (error) {
+        console.log('Error getting common friends.', error)
+        res.status(500).json({ message: 'Error getting common friends.' })
     }
 }
 
@@ -370,4 +428,5 @@ module.exports = {
     joinEvent,
     removeJoinedEvent,
     getUserUpcomingEvents,
+    getCommonFriends,
 }

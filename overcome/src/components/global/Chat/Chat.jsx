@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useRef } from 'react'
 import * as styles from './Chat.module.css'
 import ChatInput from './ChatInput/ChatInput'
@@ -16,6 +17,7 @@ const Chat = ({ _id, name }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [userColors, setUserColors] = useState({})
+  const [chatMessagesMean, setChatMessagesMean] = useState()
 
   const chatSocket = io(`${SERVER_BASE_URL}/chat`, {
     withCredentials: true,
@@ -24,6 +26,7 @@ const Chat = ({ _id, name }) => {
 
   useEffect(() => {
     getMessages()
+    getChatsMean()
     chatSocket.connect()
 
     chatSocket.on('connect', () => {
@@ -82,6 +85,7 @@ const Chat = ({ _id, name }) => {
 
   const sendHandler = (message) => {
     sendMessage(message)
+    getChatsMean()
     return true
   }
 
@@ -110,6 +114,25 @@ const Chat = ({ _id, name }) => {
     }
   }
 
+  const getChatsMean = async () => {
+    // const response = await handleRequest('GET', '/users/', {}, {}, true)
+    const userId = auth.user.id
+    const response = await handleRequest(
+      'post',
+      `/chats/getChatsMessagesMean`,
+      {
+        userId,
+      },
+      {
+        Authorization: `Bearer ${auth.authToken}`,
+      },
+      true,
+    )
+    /* console.log('RESPONSE CHATS!!', response.data) */
+    console.log('getChatsMean:', response)
+    setChatMessagesMean(response.data[0].mean)
+  }
+
   useEffect(() => {
     if (_id) {
       getMessages('change')
@@ -132,8 +155,8 @@ const Chat = ({ _id, name }) => {
           Chat: <span style={{ marginLeft: '0.2rem' }}>{name}</span>
         </div>
         <div className={`${styles.participants} font-overpass-mono`}>
-          <span style={{ marginRight: '0.4rem' }}>{participants?.length}</span>
-          users 👥
+          <div style={{ textAlign: 'right' }}>{participants?.length} users 👥</div>
+          <div>Your chat messages mean: {chatMessagesMean}</div>
         </div>
       </div>
       <div className={styles.display_wrapper}>

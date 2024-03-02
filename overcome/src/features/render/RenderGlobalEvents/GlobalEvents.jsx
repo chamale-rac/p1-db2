@@ -31,7 +31,7 @@ const UsersPage = () => {
   const [offset, setOffset] = useState(0)
   const [limit, setLimit] = useState(30)
   const [totalResults, setTotalResults] = useState(0)
-  const [searchType, setSearchType] = useState('Reccomended')
+  const [searchType, setSearchType] = useState('Searching in')
   const [suggestBy, setSuggestBy] = useState('Friends')
   const [tags, setTags] = useState('')
   const [durationSort, setDurationSort] = useState('asc')
@@ -46,10 +46,10 @@ const UsersPage = () => {
   }
 
   const getAllUsers = async () => {
-    if (search === '') {
-      setSearchType('Recommended')
+    if (search !== '') {
+      setSearchType('Searching')
     } else {
-      setSearchType('Search')
+      setSearchType('')
     }
     try {
       setLoading(true)
@@ -205,13 +205,13 @@ const UsersPage = () => {
         </div>
       </div>
 
-      <div className="border m-2 p-2 mt-4 shadow-md flex flex-row justify-between items-center">
+      <div className="flex flex-row items-center justify-between p-2 m-2 mt-4 border shadow-md">
         {/**
                 add button to get previous users, if possible, and other button to get next users if possible
                 */}
 
         <button
-          className="button asap p-2 rounded-md"
+          className="p-2 rounded-md button asap"
           onClick={() => {
             if (offset - limit >= 0) {
               setOffset(offset - limit)
@@ -228,13 +228,14 @@ const UsersPage = () => {
         </button>
         <div className="p-3 text-center">
           <p className="text-lg font-bold">
-            {searchType} events 😉 (Showing {offset + 1}-
-            {offset + Math.min(limit, totalResults)} of {totalResults} results)
+            {searchType} {suggestions === 'Yes' ? 'Suggested' : 'All'} events 😉
+            (Showing {offset + 1}-{offset + Math.min(limit, totalResults)} of{' '}
+            {totalResults} results)
           </p>
         </div>
 
         <button
-          className="button asap p-2 rounded-md"
+          className="p-2 rounded-md button asap"
           onClick={() => {
             if (offset + limit < totalResults) {
               setOffset(offset + limit)

@@ -140,6 +140,7 @@ const getAllReports = async (req, res) => {
             .populate('revisor', 'username')
             .populate('eventId', 'title')
             .populate('perpetrator', 'username')
+            .limit(1)
 
         res.status(200).json({
             status: 'success',

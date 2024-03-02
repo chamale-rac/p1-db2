@@ -24,6 +24,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
   const closeReport = () => setReportOpenValue(false)
 
   const [friendResponse, setFriendResponse] = useState(null)
+  const [commonFriends, setCommonFriends] = useState(null)
 
   useEffect(() => {
     /* console.log('theUSER', user)*/
@@ -47,6 +48,30 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
       setFriendStatus(response.data.isFriend)
     } catch (error) {
       console.error('CHECK ERROR', error)
+      setError(
+        'Error sending friend request, please try again later or contact support',
+      )
+    }
+  }
+
+  const getCommonFriends = async () => {
+    try {
+      const response = await handleRequest(
+        'POST',
+        `/users/commonFriends`,
+        {
+          userId1: auth.user.id,
+          userId2: user_id || creator_id,
+        },
+        {
+          Authorization: 'Bearer ' + auth.authToken,
+        },
+        true,
+      )
+      console.log('COMMON FRIENDS', response.data)
+      setCommonFriends(response.data)
+    } catch (error) {
+      console.error('COMMON FRIENDS ERROR', error)
       setError(
         'Error sending friend request, please try again later or contact support',
       )
@@ -100,6 +125,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
       /* console.log(response.data)*/
       setUser(response.data)
       checkFriendStatus()
+      getCommonFriends()
     } catch (error) {
       console.error(error)
       setError(
@@ -184,6 +210,10 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
                 <h2 className={`${styles.event_title} font-bebas-neue`}>
                   @{user?.username} {user?._id === auth.user.id && '(You)'}
                 </h2>
+                <h3>
+                  {commonFriends?.length > 0 &&
+                    `Common friends: ${commonFriends.length}`}
+                </h3>
                 <div className={styles.buttonWrapper}>
                   <div className={styles.buttonOutside}>
                     {user?._id === auth.user.id ? (
@@ -234,21 +264,19 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
               <h3>Email: {user?.email}</h3>
               <div className={styles.content_wrapper}>
                 <h3>Interests:</h3>
-                { user?.interests.length > 0 ?
-                user?.interests.map((tag) => (
-                  <p key={tag}>{tag}</p>
-                )) :
-                <aside>No interests found</aside>
-                }
+                {user?.interests.length > 0 ? (
+                  user?.interests.map((tag) => <p key={tag}>{tag}</p>)
+                ) : (
+                  <aside>No interests found</aside>
+                )}
               </div>
               <div className={styles.content_wrapper}>
                 <h3>Favorite Games:</h3>
-                { user?.favorites.length > 0 ?
-                user?.favorites.map((tag) => (
-                  <p key={tag}>{tag}</p>
-                )) :
-                <aside>No favorite games found</aside>
-                }
+                {user?.favorites.length > 0 ? (
+                  user?.favorites.map((tag) => <p key={tag}>{tag}</p>)
+                ) : (
+                  <aside>No favorite games found</aside>
+                )}
               </div>
               <div className={`${styles.eventsContainerOtherProfile}`}>
                 {!(user?.savedEvents === undefined) && (
