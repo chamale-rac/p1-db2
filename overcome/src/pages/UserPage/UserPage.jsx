@@ -26,6 +26,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
 
   const [friendResponse, setFriendResponse] = useState(null)
   const [commonFriends, setCommonFriends] = useState(null)
+  const [realImage, setRealImage] = useState(null)
 
   useEffect(() => {
     /* console.log('theUSER', user)*/
@@ -131,6 +132,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
 
       checkFriendStatus()
       getCommonFriends()
+      handleGetImage()
     } catch (error) {
       console.error(error)
       setError(
@@ -140,10 +142,6 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    handleGetImage()
-  }, [user])
 
   const handleGetImage = async () => {
     if (user.profilePicture) {
@@ -162,6 +160,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
           }),
           console,
         )
+        setRealImage(imageUrl)
       }
     }
   }
@@ -250,7 +249,7 @@ const UserPage = ({ isCreator = true, user_id = null }) => {
             <div className={styles.title_wrapper}>
               <div className={styles.flex}>
                 <img
-                  src={user.profilePicture ?? '/profile-400.png'}
+                  src={realImage ?? '/profile-400.png'}
                   alt="Foto de perfil de Juan"
                 />
                 <h2 className={`${styles.event_title} font-bebas-neue`}>

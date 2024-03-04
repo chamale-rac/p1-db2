@@ -29,6 +29,7 @@ function Profile() {
   const [openInfoPopup, setOpenInfoPopup] = useState(false)
   const [openRequestPopup, setOpenRequestPopup] = useState(false)
   const [userImage, setUserImage] = useState(null)
+  const [realImage, setRealImage] = useState(null)
 
   const closeProfilePopup = () => setOpenProfilePopup(false)
   const closeInfoPopup = () => setOpenInfoPopup(false)
@@ -58,7 +59,7 @@ function Profile() {
       /* console.log(response.data)*/
       // add just a new field or update the profilePicture field
       setUser({ ...user })
-      setUserImage(URL.createObjectURL(newImage))
+      setRealImage(URL.createObjectURL(newImage))
       image.result = ''
     } catch (error) {
       console.error(error)
@@ -107,6 +108,11 @@ function Profile() {
     console.log('USER!!!', response.data)
     setUser(response.data)
 
+    setProfileLoading(false)
+    handleGetImage()
+  }
+
+  const handleGetImage = async () => {
     if (user.profilePicture) {
       // If not includes http or https, then it's a local image
       if (
@@ -115,6 +121,7 @@ function Profile() {
       ) {
         console.log('local image')
         const imageUrl = await getImage(user.profilePicture)
+        console.log('xd')
         setUser(
           (prev) => ({
             ...prev,
@@ -122,10 +129,9 @@ function Profile() {
           }),
           console,
         )
+        setRealImage(imageUrl)
       }
     }
-
-    setProfileLoading(false)
   }
 
   const getImage = async (imageId) => {
@@ -180,7 +186,7 @@ function Profile() {
           </div>
         ) : (
           <ImageCustomizer
-            actualImage={user.profilePicture ?? '/profile-400.png'}
+            actualImage={realImage ?? '/profile-400.png'}
             saveNewImage={handleSaveImage}
           />
         )}
@@ -235,7 +241,7 @@ function Profile() {
               <div className="flex items-center gap-2 md:gap-4 ">
                 <div className="relative object-cover w-20 h-20 md:h-24 md:w-24">
                   <img
-                    src={user.profilePicture ?? '/profile-400.png'}
+                    src={realImage ?? '/profile-400.png'}
                     alt="Profile Image"
                     className="object-fill w-20 h-20 rounded-full shadow-2xl md:h-24 md:w-24"
                   />
